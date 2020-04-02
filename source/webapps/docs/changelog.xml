@@ -88,6 +88,19 @@
         data on the request line after the URI are treated consistently. Such
         requests will now always be treated as HTTP/1.1. (markt)
       </fix>
+      <add>
+        Expose the HTTP/2 connection ID and stream ID to applications via the
+        request attributes <code>org.apache.coyote.connectionID</code> and
+        <code>org.apache.coyote.streamID</code> respectively. (markt)
+      </add>
+      <add>
+        Replace the system property
+        <code>org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH</code>
+        with the Connector attribute <code>encodedSolidusHandling</code> that
+        adds an additional option to pass the <code>%2f</code> sequence through
+        to the application without decoding it in addition to rejecting such
+        sequences and decoding such sequences. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -99,6 +112,16 @@
         does not support these values, a warning will be logged and the latest
         supported version will used. (markt)
       </add>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        Correct the documentation web application to remove references to the
+        <code>org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH</code>
+        system property changing how the sequence <code>%5c</code> is
+        interpretted in a URI. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Other">
@@ -116,6 +139,12 @@
         when using jsvc via <code>daemon.sh</code> and allow the umask used to
         be configured via the <code>UMASK</code> environment variable as it is
         when using <code>catalina.sh</code>. (markt)
+      </fix>
+      <fix>
+        Depreacted the <code>LOGGING_CONFIG</code> environment variable and
+        replace it with the <code>CATALINA_LOGGING_CONFIG</code> environment
+        variable to avoid clashes with other components that use
+        <code>LOGGING_CONFIG</code>. (markt)
       </fix>
     </changelog>
   </subsection>
