@@ -35,6 +35,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Context;
@@ -42,7 +43,6 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.connector.RequestFacade;
-import org.apache.catalina.servlet4preview.http.HttpServletMapping;
 import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.URLEncoder;
 import org.apache.tomcat.util.buf.B2CConverter;
@@ -66,8 +66,7 @@ import org.apache.tomcat.util.res.StringManager;
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  */
-class ApplicationHttpRequest
-        extends org.apache.catalina.servlet4preview.http.HttpServletRequestWrapper {
+class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
     private static final StringManager sm = StringManager.getManager(ApplicationHttpRequest.class);
 
@@ -193,7 +192,7 @@ class ApplicationHttpRequest
     /**
      * The mapping for this request.
      */
-    private HttpServletMapping mapping = null;
+    private ApplicationMappingImpl mapping = null;
 
 
     /**
@@ -527,8 +526,7 @@ class ApplicationHttpRequest
     }
 
 
-    @Override
-    public HttpServletMapping getHttpServletMapping() {
+    public ApplicationMappingImpl getHttpServletMapping() {
         return mapping;
     }
 
@@ -718,11 +716,7 @@ class ApplicationHttpRequest
         queryString = request.getQueryString();
         requestURI = request.getRequestURI();
         servletPath = request.getServletPath();
-        if (request instanceof org.apache.catalina.servlet4preview.http.HttpServletRequest) {
-            mapping = ((org.apache.catalina.servlet4preview.http.HttpServletRequest) request).getHttpServletMapping();
-        } else {
-            mapping = (new ApplicationMapping(null)).getHttpServletMapping();
-        }
+        mapping = ApplicationMapping.getHttpServletMapping(request);
     }
 
 
@@ -781,7 +775,7 @@ class ApplicationHttpRequest
     }
 
 
-    void setMapping(HttpServletMapping mapping) {
+    void setMapping(ApplicationMappingImpl mapping) {
         this.mapping = mapping;
     }
 

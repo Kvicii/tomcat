@@ -45,8 +45,9 @@
          <code>org.apache.tomcat.util.IntrospectionUtils.PropertySource</code>.
          Required to have a public constructor with no arguments.</p>
       <p>Use this to add a property source, that will be invoked when
-         <code>${parameter}</code> denoted parameters are found in the XML files
-         that Tomcat parses.</p>
+         <code>${parameter:default-value}</code> denoted parameters (with
+         optional default values) are found in the XML files that Tomcat
+         parses.</p>
       <p>Property replacement from the specified property source on the JVM
          system properties can also be done using the
          <code>REPLACE_SYSTEM_PROPERTIES</code> system property.</p>
@@ -68,6 +69,8 @@
   <properties>
 
     <property name="org.apache.catalina. tribes.dns_lookups">
+      <p>This system property is deprecated and will be removed without
+      replacement in Apache Tomcat 10 onwards.</p>
       <p>If <code>true</code>, the clustering module will attempt to use DNS to
       resolve any host names provided in the cluster configuration.</p>
       <p>If not specified, the default value of <code>false</code> will be used.</p>
@@ -541,6 +544,11 @@
       <p>If <code>true</code>, allow unknown extensions to be declared by
       the user.</p>
       <p>The default value is <code>false</code>.</p>
+    </property>
+
+    <property name="org.apache.tomcat. websocket.DEFAULT_BUFFER_SIZE">
+      <p>The default size for buffers used in the Websockets container.</p>
+      <p>The default value is <code>8192</code> which corresponds to 8KB.</p>
     </property>
 
     <property name="org.apache.tomcat. websocket.DEFAULT_ORIGIN_HEADER_VALUE">

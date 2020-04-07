@@ -44,7 +44,27 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.54 (markt)" rtext="in development">
+<section name="Tomcat 8.5.55 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <scode>
+        Remove the remainder of the deprecated Servlet 4 Preview API. Users
+        still depending on this feature should ideally upgrade to Tomcat
+        9.0.x. If upgrade is not possible, application code should cast to the
+        internal Tomcat implementation classes. (markt)
+      </scode>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Move <code>SocketProperties</code> mbean to its own type rather than
+        use a subType to improve robustness with tools. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.54 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -72,7 +92,12 @@
       </fix>
       <fix>
         <bug>64265</bug>: Fix ETag comparison performed by the default servlet.
-        The default servley always uses weak comparison. (markt)
+        The default servlet always uses weak comparison. (markt)
+      </fix>
+      <fix>
+        Add support for default values when using <code>${...}</code> property
+        replacement in configuration files. Based on a pull request provided by
+        Bernd Bohmann. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -101,6 +126,12 @@
         to the application without decoding it in addition to rejecting such
         sequences and decoding such sequences. (markt)
       </add>
+      <add>
+        Expose the associated <code>HttpServletRequest</code> to the
+        <code>CookieProcessor</code> when generating a cookie header so the
+        header can be tailored based on the properties of the request, such as
+        the user agent, if required. Based on a patch by Lazar Kirchev. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -112,6 +143,15 @@
         does not support these values, a warning will be logged and the latest
         supported version will used. (markt)
       </add>
+    </changelog>
+  </subsection>
+  <subsection name="Cluster">
+    <changelog>
+      <scode>
+        Refactor the creation of <code>DeltaRequest</code> objects to make it
+        simpler to use custom implementations. Based on a pull request provided
+        by Thomas Stock. (markt)
+      </scode>
     </changelog>
   </subsection>
   <subsection name="Web applications">
