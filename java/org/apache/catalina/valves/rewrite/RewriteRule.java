@@ -26,7 +26,7 @@ public class RewriteRule {
 
     protected RewriteCond[] conditions = new RewriteCond[0];
 
-    protected ThreadLocal<Pattern> pattern = new ThreadLocal<>();
+    protected static ThreadLocal<Pattern> pattern = new ThreadLocal<>();
     protected Substitution substitution = null;
 
     protected String patternString = null;
@@ -53,14 +53,14 @@ public class RewriteRule {
         }
         Pattern.compile(patternString, flags);
         // Parse conditions
-        for (int i = 0; i < conditions.length; i++) {
-            conditions[i].parse(maps);
+        for (RewriteCond condition : conditions) {
+            condition.parse(maps);
         }
         // Parse flag which have substitution values
         if (isEnv()) {
-            for (int i = 0; i < envValue.size(); i++) {
+            for (String s : envValue) {
                 Substitution newEnvSubstitution = new Substitution();
-                newEnvSubstitution.setSub(envValue.get(i));
+                newEnvSubstitution.setSub(s);
                 newEnvSubstitution.parse(maps);
                 envSubstitution.add(newEnvSubstitution);
                 envResult.add(new ThreadLocal<String>());
@@ -86,7 +86,7 @@ public class RewriteRule {
      * @return <code>null</code> if no rewrite took place
      */
     public CharSequence evaluate(CharSequence url, Resolver resolver) {
-        Pattern pattern = this.pattern.get();
+        Pattern pattern = RewriteRule.pattern.get();
         if (pattern == null) {
             // Parse the pattern
             int flags = 0;
@@ -94,7 +94,7 @@ public class RewriteRule {
                 flags |= Pattern.CASE_INSENSITIVE;
             }
             pattern = Pattern.compile(patternString, flags);
-            this.pattern.set(pattern);
+            RewriteRule.pattern.set(pattern);
         }
         Matcher matcher = pattern.matcher(url);
         // Use XOR
@@ -186,7 +186,7 @@ public class RewriteRule {
     protected boolean cookieSecure = false;
     protected boolean cookieHttpOnly = false;
     protected Substitution cookieSubstitution = null;
-    protected ThreadLocal<String> cookieResult = new ThreadLocal<>();
+    protected static ThreadLocal<String> cookieResult = new ThreadLocal<>();
 
     /**
      *  This forces a request attribute named VAR to be set to the value VAL,
@@ -299,7 +299,7 @@ public class RewriteRule {
 
     /**
      *  Prefix Substitution with http://thishost[:thisport]/ (which makes the
-     *  new URL a URI) to force a external redirection. If no code is given
+     *  new URL a URI) to force an external redirection. If no code is given
      *  an HTTP response of 302 (FOUND, previously MOVED TEMPORARILY) is used.
      *  If you want to  use other response codes in the range 300-399 just
      *  specify them as a number or use one of the following symbolic names:

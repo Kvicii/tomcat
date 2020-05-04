@@ -85,7 +85,7 @@ public class ReplicationValve
     /**
      * crossContext session container
      */
-    protected final ThreadLocal<ArrayList<DeltaSession>> crossContextSessions =
+    protected static final ThreadLocal<ArrayList<DeltaSession>> crossContextSessions =
         new ThreadLocal<>() ;
 
     /**
@@ -318,7 +318,7 @@ public class ReplicationValve
         Context context = request.getContext();
         boolean isCrossContext = context != null
                 && context instanceof StandardContext
-                && ((StandardContext) context).getCrossContext();
+                && context.getCrossContext();
         try {
             if(isCrossContext) {
                 if(log.isDebugEnabled()) {
@@ -543,11 +543,11 @@ public class ReplicationValve
     protected void sendInvalidSessions(ClusterManager manager) {
         String[] invalidIds=manager.getInvalidatedSessions();
         if ( invalidIds.length > 0 ) {
-            for ( int i=0;i<invalidIds.length; i++ ) {
+            for (String invalidId : invalidIds) {
                 try {
-                    send(manager,invalidIds[i]);
-                } catch ( Exception x ) {
-                    log.error(sm.getString("ReplicationValve.send.invalid.failure",invalidIds[i]),x);
+                    send(manager, invalidId);
+                } catch (Exception x) {
+                    log.error(sm.getString("ReplicationValve.send.invalid.failure", invalidId), x);
                 }
             }
         }

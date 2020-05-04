@@ -62,6 +62,42 @@
         Remove redundant sole path/URI from error page message on SC_NOT_FOUND.
         (michaelo)
       </update>
+      <add>
+        Log a warning if a <code>CredentialHandler</code> instance is added to
+        an instance of the <code>CombinedRealm</code> (or a sub-class) as the
+        <code>CombinedRealm</code> doesn't use a configued
+        <code>CredentialHandler</code> and it is likely that a configuration
+        error has occurred. (markt)
+      </add>
+      <add>
+        Add more descriptive error message in DefaultServlet for SC_NOT_FOUND.
+        (michaelo)
+      </add>
+      <add>
+        <bug>59203</bug>: Before calling <code>Thread.stop()</code> (if
+        configured to do so) on a web application created thread that is not
+        stopped by the web application when the web application is stopped, try
+        interrupting the thread first. Based on a pull request by Govinda
+        Sakhare. (markt)
+      </add>
+      <fix>
+        <bug>64309</bug>: Improve the regular expression used to search for
+        class loader repositories when bootstrapping Tomcat. Pull request
+        provided by Paul Muriel Biya-Bi. (markt)
+      </fix>
+      <fix>
+        <bug>64384</bug>: Fix multipart configuration ignoring some parameters
+        in some cases. (schultz)
+      </fix>
+      <add>
+        <bug>64386</bug>: WebdavServlet does not send "getlastmodified"
+        property for resource collections. (michaelo)
+      </add>
+      <fix>
+        <bug>64398</bug>: Change default value separator for property
+        replacement to <code>:-</code> due to possible conflicts. The
+        syntax is now <code>${name:-default}</code>. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -74,6 +110,11 @@
         Include the problematic data in the error message when reporting that
         the provided request line contains an invalid component. (markt)
       </fix>
+      <fix>
+        Improve the handling of requests that use an expectation. Do not disable
+        keep-alive where the response has a non-2xx status code but the request
+        body has been fully read. (rjung/markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -82,6 +123,32 @@
         Remove redundant sole path/URI from error page message on SC_NOT_FOUND.
         (michaelo)
       </update>
+      <add>
+        Add more descriptive error message in DefaultServlet for SC_NOT_FOUND.
+        (michaelo)
+      </add>
+      <fix>
+        <bug>64373</bug>: When a tag file is packaged in a WAR and then that WAR
+        is unpacked in <code>/WEB-INF/classes</code> ensure that the tag file
+        can still be found. Patch provided by Karl von Randow. (markt)
+      </fix>
+      <fix>
+        Ensure that the Jasper code that interfaces with the Eclipse Compiler
+        for Java (ECJ) enables Jasper to compile JSPs using ECJ 4.14 onwards
+        when the JSPs have inner classes. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        Fix the saving of a Context configuration file via the scripting
+        interface of the Manager web application. (markt)
+      </fix>
+      <add>
+        Add a section to the TLS Connector documentation on different key store
+        types and how to configure them. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Other">
@@ -89,6 +156,43 @@
       <update>
         Update JUnit to version 4.13. (markt)
       </update>
+      <fix>
+        Add missing entries to test class path in sample NetBeans configuration
+        files. Patch provided by Brian Burch. (markt)
+      </fix>
+      <scode>
+        Refactor to use parameterized <code>Collection</code> constructors where
+        possible. Pull request provided by Lars Grefer. (markt)
+      </scode>
+      <scode>
+        Refactor to use empty arrays with <code>Collections.toArray()</code>.
+        Pull request provided by Lars Grefer. (markt)
+      </scode>
+      <scode>
+        Refactor loops with a condition to exit as soon as the condition is met.
+        Pull request provided by Lars Grefer. (markt)
+      </scode>
+      <scode>
+        Refactor bulk addition to collections to use <code>addAll()</code>
+        rather than a loop. Pull request provided by Lars Grefer. (markt)
+      </scode>
+      <add>
+        Expand the coverage of the Chinese translations provided with Apache
+        Tomcat. Contributions provided by winsonzhao, ZhangJieWen and Lee
+        Yazhou. (markt)
+      </add>
+      <update>
+        Update the packaged version of the Tomcat Native Library to 1.2.24.
+        (markt)
+      </update>
+      <scode>
+        Refactor to use enhanced for loops where possible. Pull request by Lars
+        Grefer. (markt)
+      </scode>
+      <add>
+        Improve IDE support for IntelliJ IDEA. Patch provided by Lars Grefer.
+        (markt)
+      </add>
     </changelog>
   </subsection>
 </section>

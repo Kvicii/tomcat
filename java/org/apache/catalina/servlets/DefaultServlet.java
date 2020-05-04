@@ -411,7 +411,7 @@ public class DefaultServlet extends HttpServlet {
             // gzip handling is for backwards compatibility with Tomcat 8.x
             ret.add(new CompressionFormat(".gz", "gzip"));
         }
-        return ret.toArray(new CompressionFormat[ret.size()]);
+        return ret.toArray(new CompressionFormat[0]);
     }
 
 
@@ -857,7 +857,8 @@ public class DefaultServlet extends HttpServlet {
                 response.sendError(((Integer) request.getAttribute(
                         RequestDispatcher.ERROR_STATUS_CODE)).intValue());
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                        sm.getString("defaultServlet.missingResource", requestUri));
             }
             return;
         }
@@ -946,7 +947,8 @@ public class DefaultServlet extends HttpServlet {
             // Skip directory listings if we have been configured to
             // suppress them
             if (!listings) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                        sm.getString("defaultServlet.missingResource", request.getRequestURI()));
                 return;
             }
             contentType = "text/html;charset=UTF-8";

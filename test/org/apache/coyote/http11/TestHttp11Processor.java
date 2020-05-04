@@ -622,6 +622,7 @@ public class TestHttp11Processor extends TomcatBaseTest {
                     for (Cookie cookie : req.getCookies()) {
                         if (cookie.getName().equalsIgnoreCase("something.that.should.not.leak")) {
                             bug55772RequestStateLeaked = true;
+                            break;
                         }
                     }
                 }
@@ -1650,9 +1651,7 @@ public class TestHttp11Processor extends TomcatBaseTest {
             if (null == req.getServerName())
             {
                 out.print("request.getServerName() is null");
-            }
-            else
-            {
+            } else {
                 out.print("request.getServerName() is [" + req.getServerName() + "]");
             }
 

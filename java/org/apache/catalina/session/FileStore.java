@@ -156,8 +156,8 @@ public final class FileStore extends StoreBase {
     @Override
     public void clear() throws IOException {
         String[] keys = keys();
-        for (int i = 0; i < keys.length; i++) {
-            remove(keys[i]);
+        for (String key : keys) {
+            remove(key);
         }
     }
 
@@ -191,7 +191,7 @@ public final class FileStore extends StoreBase {
                 list.add (file.substring(0, file.length() - n));
             }
         }
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
 
