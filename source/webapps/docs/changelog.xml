@@ -45,8 +45,15 @@
   issues do not "pop up" wrt. others).
 -->
 <section name="Tomcat 8.5.56 (markt)" rtext="in development">
+  <subsection name="Coyote">
+    <changelog>
+      <update>
+        Add support for ALPN on recent OpenJDK 8 releases. (remm)
+      </update>
+    </changelog>
+  </subsection>
 </section>
-<section name="Tomcat 8.5.55 (markt)" rtext="release in progress">
+<section name="Tomcat 8.5.55 (markt)" rtext="2020-05-11">
   <subsection name="Catalina">
     <changelog>
       <scode>
