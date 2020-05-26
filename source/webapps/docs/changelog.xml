@@ -56,6 +56,10 @@
         Add the special internal rewrite maps for case modification and
         escaping. (remm/fschumacher)
       </update>
+      <fix>
+        <bug>64470</bug>: The default value of the solidus handling should
+        reflect the associated system property. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -76,6 +80,15 @@
         endpoint path is specified and catch invalid endpoint paths earlier.
         (markt)
       </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <update>
+        Update the list of known <code>Charset</code>s in the
+        <code>CharsetCache</code> to include <code>ISO-8859-16</code>, added in
+        OpenJDK 15. (markt)
+      </update>
     </changelog>
   </subsection>
 </section>
