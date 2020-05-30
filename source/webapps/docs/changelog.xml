@@ -60,6 +60,10 @@
         <bug>64470</bug>: The default value of the solidus handling should
         reflect the associated system property. (remm)
       </fix>
+      <fix>
+        Implement a few rewrite SSL env that correspond to Servlet request
+        attributes. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -88,6 +92,20 @@
         Update the list of known <code>Charset</code>s in the
         <code>CharsetCache</code> to include <code>ISO-8859-16</code>, added in
         OpenJDK 15. (markt)
+      </update>
+      <add>
+        Improve the quality and expand the coverage of the French translations
+        provided with Apache Tomcat. (remm)
+      </add>
+      <add>
+        <bug>64430</bug>: Add support for the <code>CATALINA_OUT_CMD</code>
+        environment variable that defines a command to which captured stdout and
+        stderr will be redirected. Patch provided by Harald Dunkel. (markt)
+      </add>
+      <update>
+        Switch from the unsupported Maven Ant Tasks to the supported Maven
+        Resolver Ant Tasks to upload artifacts to the ASF Maven repository (and
+        from there to Maven Central). (markt)
       </update>
     </changelog>
   </subsection>
