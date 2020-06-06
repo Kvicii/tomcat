@@ -44,7 +44,32 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.56 (markt)" rtext="in development">
+<section name="Tomcat 8.5.57 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <add>
+        Remove the error message on start if <code>java.io.tmpdir</code> is
+        missing and add an explicit error message on application deployment when
+        the sole feature that depends on it (anti-resource locking) is
+        configured and can't be used. (markt)
+      </add>
+      <update>
+        Implement a significant portion of the TLS environment variables for
+        the rewrite valve. (remm)
+      </update>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <add>
+        Include a <code>Connection: close</code> HTTP header when committing a
+        response and it is known that the <code>maxSwallowSize</code> limit is
+        going to be exceeded. (markt)
+      </add>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.56 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -64,6 +89,11 @@
         Implement a few rewrite SSL env that correspond to Servlet request
         attributes. (remm)
       </fix>
+      <update>
+        <bug>64442</bug>: Be more flexible with respect to the ordering of
+        groups, roles and users in the <code>tomcat-users.xml</code> file.
+        (fschumacher)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -75,6 +105,19 @@
         <bug>64467</bug>: Improve performance of closing idle HTTP/2 streams.
         (markt)
       </fix>
+      <add>
+        <bug>64483</bug>: Log a warning if an AJP request is rejected because it
+        contains an unexpected request attribute. (markt)
+      </add>
+    </changelog>
+  </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>64488</bug>: Ensure that the ImportHandler from the Expression
+        Language API is able to load classes from the Java runtime when running
+        under a SecurityManager. Based on a patch by Volodymyr Siedleck. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="WebSocket">
@@ -84,6 +127,10 @@
         endpoint path is specified and catch invalid endpoint paths earlier.
         (markt)
       </fix>
+      <add>
+        Include the target URL in the log message when a WebSocket connection
+        fails. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Other">

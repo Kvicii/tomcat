@@ -222,7 +222,7 @@ public final class TesterSupport {
         return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("mac os x");
     }
 
-    protected static boolean isRenegotiationSupported(Tomcat tomcat) {
+    public static boolean isRenegotiationSupported(Tomcat tomcat) {
         String protocol = tomcat.getConnector().getProtocolHandlerClassName();
         if (protocol.contains("Apr")) {
             // Disabled by default in 1.1.20 windows binary (2010-07-27)
@@ -251,7 +251,7 @@ public final class TesterSupport {
         return true;
     }
 
-    protected static void configureClientCertContext(Tomcat tomcat) {
+    public static void configureClientCertContext(Tomcat tomcat) {
         TesterSupport.initSsl(tomcat);
 
         /* When running on Java 11, TLSv1.3 is enabled by default. The JSSE
