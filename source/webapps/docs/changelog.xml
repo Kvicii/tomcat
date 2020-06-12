@@ -57,6 +57,11 @@
         Implement a significant portion of the TLS environment variables for
         the rewrite valve. (remm)
       </update>
+      <fix>
+        <bug>64506</bug>: Correct a potential race condition in the resource
+        cache implementation that could lead to
+        <code>NullPointerException</code>s during class loading. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -66,10 +71,24 @@
         response and it is known that the <code>maxSwallowSize</code> limit is
         going to be exceeded. (markt)
       </add>
+      <fix>
+        <bug>64509</bug>: Correctly parse RFC 2109 version 1 cookies that use a
+        comma as a separater between cookies when using the RFC 6265 cookie
+        processor. Based on a patch by W J Carpenter. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <fix>
+        <bug>64501</bug>: Refactor the handling of the deprecated
+        <code>LOGGING_CONFIG</code> environment variable to avoid using a POSIX
+        shell feature that is not available by default on Solaris 10. (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
-<section name="Tomcat 8.5.56 (markt)" rtext="release in progress">
+<section name="Tomcat 8.5.56 (markt)" rtext="2020-06-07">
   <subsection name="Catalina">
     <changelog>
       <fix>
