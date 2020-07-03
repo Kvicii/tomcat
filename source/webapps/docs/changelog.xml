@@ -44,7 +44,9 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.57 (markt)" rtext="in development">
+<section name="Tomcat 8.5.58 (markt)" rtext="in development">
+</section>
+<section name="Tomcat 8.5.57 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <add>
@@ -72,6 +74,11 @@
         implement the requested method rather than the more general
         <code>400</code> response. (markt)
       </fix>
+      <fix>
+        <bug>64541</bug>: Refactor the DTD used to validate
+        <code>mbeans-descriptors.xml</code> files to avoid issues when XML
+        entity expansion is limited or disabled. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -83,7 +90,7 @@
       </add>
       <fix>
         <bug>64509</bug>: Correctly parse RFC 2109 version 1 cookies that use a
-        comma as a separater between cookies when using the RFC 6265 cookie
+        comma as a separator between cookies when using the RFC 6265 cookie
         processor. Based on a patch by W J Carpenter. (markt)
       </fix>
       <fix>
@@ -93,7 +100,7 @@
       </fix>
       <fix>
         Correctly parse RFC 2109 version 1 cookies that have additional linear
-        white space around cookie attrubute names and values when using the RFC
+        white space around cookie attribute names and values when using the RFC
         6265 cookie processor. (markt)
       </fix>
       <fix>
@@ -109,6 +116,27 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Cluster">
+    <changelog>
+      <fix>
+        <bug>64560</bug>: Refactor the replication of a changed session ID for a
+        replicated session so that the list of changes associated with the
+        session is not reset when the session ID changes. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="WebSocket">
+    <changelog>
+      <fix>
+        <bug>64563</bug>: Add additional validation of payload length for
+        WebSocket messages. (markt)
+      </fix>
+      <fix>
+        Correct the calculation of payload length when four or more bytes are
+        required to represent the payload length. (markt)
+      </fix>
+    </changelog>
+  </subsection>
   <subsection name="Other">
     <changelog>
       <fix>
@@ -117,7 +145,7 @@
         shell feature that is not available by default on Solaris 10. (markt)
       </fix>
       <fix>
-        <bug>64514</bug>: Fixes some missing class dependency issus in bootstrap
+        <bug>64514</bug>: Fixes some missing class dependency issues in bootstrap
         to address packaging/dependency concerns for JPMS and OSGi. Pull request
         provided by Raymond Augé. (markt)
       </fix>
@@ -130,6 +158,10 @@
         <bug>64522</bug>: Package jars in effective dependency order. Pull
         request provided by Raymond Augé. (markt)
       </fix>
+      <add>
+        Improve the quality and expand the coverage of the French translations
+        provided with Apache Tomcat. (remm)
+      </add>
     </changelog>
   </subsection>
 </section>
