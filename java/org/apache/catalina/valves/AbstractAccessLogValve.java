@@ -840,7 +840,7 @@ public abstract class AbstractAccessLogValve extends ValveBase implements Access
             if (info != null) {
                 buf.append(info.getWorkerThreadName());
             } else {
-                buf.append("-");
+                buf.append('-');
             }
         }
     }
