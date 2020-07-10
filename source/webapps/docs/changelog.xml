@@ -45,6 +45,24 @@
   issues do not "pop up" wrt. others).
 -->
 <section name="Tomcat 8.5.58 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>64582</bug>: Pre-load the <code>CoyoteOutputStream</code> class to
+        prevent a potential exception when running under a security manager.
+        Patch provided by Johnathan Gilday. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Refactor the implementation of
+        <code>ServletInputStream.available()</code> to provide a more accurate
+        return value, particularly when end of stream has been reached. (markt)
+      </fix>
+    </changelog>
+  </subsection>
   <subsection name="WebSocket">
     <changelog>
       <fix>
@@ -61,6 +79,10 @@
         Remove the localization of the text output of the Manager application
         list of contexts and the Host Manager application list of hosts so that
         the output is more consistent. PR provided by Holomark. (markt)
+      </fix>
+      <fix>
+        Clean-up / standardize the XSL files used to generate the documentation.
+        PR provided by John Bampton. (markt)
       </fix>
     </changelog>
   </subsection>
