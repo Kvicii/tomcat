@@ -16,15 +16,14 @@
  */
 package org.apache.catalina.core;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
 import org.apache.catalina.Host;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
-import org.apache.tomcat.util.res.StringManager;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Valve that implements the default basic behavior for the
@@ -43,15 +42,6 @@ final class StandardEngineValve extends ValveBase {
     }
 
 
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The string manager for this package.
-     */
-    private static final StringManager sm =
-            StringManager.getManager(Constants.Package);
-
-
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -59,22 +49,25 @@ final class StandardEngineValve extends ValveBase {
      * based on the requested server name.  If no matching Host can
      * be found, return an appropriate HTTP error.
      *
-     * @param request  Request to be processed
+     * @param request Request to be processed
      * @param response Response to be produced
-     * @throws IOException      if an input/output error occurred
-     * @throws ServletException if a servlet error occurred
+     *
+     * @exception IOException if an input/output error occurred
+     * @exception ServletException if a servlet error occurred
      */
     @Override
     public final void invoke(Request request, Response response)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
 
         // Select the Host to be used for this Request
         Host host = request.getHost();
         if (host == null) {
-            response.sendError
-                    (HttpServletResponse.SC_BAD_REQUEST,
-                            sm.getString("standardEngine.noHost",
-                                    request.getServerName()));
+            // HTTP 0.9 or HTTP 1.0 request without a host when no default host
+            // is defined.
+            // Don't overwrite an existing error
+            if (!response.isError()) {
+                response.sendError(404);
+            }
             return;
         }
         if (request.isAsyncSupported()) {
@@ -83,6 +76,5 @@ final class StandardEngineValve extends ValveBase {
 
         // Ask this Host to process this request
         host.getPipeline().getFirst().invoke(request, response);
-
     }
 }

@@ -48,9 +48,20 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        <bug>53411</bug>: Improve the handling of HTTP requests that do not
+        explicitly specify a host name when no default host is configured. Also
+        improve the tracking of changes to the default host as hosts are added
+        and removed while Tomcat is running. (markt)
+      </fix>
+      <fix>
         <bug>64582</bug>: Pre-load the <code>CoyoteOutputStream</code> class to
         prevent a potential exception when running under a security manager.
         Patch provided by Johnathan Gilday. (markt)
+      </fix>
+      <fix>
+        <bug>64593</bug>: If a request is not matched to a Context, delay
+        issuing the 404 response to give the rewrite valve, if configured, an
+        opportunity to rewrite the request. (remm/markt)
       </fix>
     </changelog>
   </subsection>
