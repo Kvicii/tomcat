@@ -73,7 +73,8 @@
         requests. Requests with headers that contain invalid entity tags will be
         rejected with a 400 response code. Improve the matching algorithm used
         to compare entity tags in conditional requests with the entity tag for
-        the requested resource. (markt)
+        the requested resource. Based on a pull request by Sergey Ponomarev.
+        (markt)
       </fix>
     </changelog>
   </subsection>
@@ -83,6 +84,10 @@
         Refactor the implementation of
         <code>ServletInputStream.available()</code> to provide a more accurate
         return value, particularly when end of stream has been reached. (markt)
+      </fix>
+      <fix>
+        Avoid several potential NPEs introduced in the changes in the previous
+        release to reduce the memory footprint of closed HTTP/2 streams. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -115,6 +120,22 @@
         <bug>62723</bug>: Clarify the effects of some options for cluster
         <code>channelSendOptions</code>. Patch provided by Mitch Claborn.
         (schultz)
+      </fix>
+      <fix>
+        Remove the out of date functional specification secton from the
+        documentation web application. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <add>
+        Improve the quality of the Japanese translations provided with Apache
+        Tomcat. Includes contributions from Yuki Shira. (markt)
+      </add>
+      <fix>
+        <bug>64645</bug>: Use a non-zero exit code if the
+        <code>service.bat</code> does not complete normally. (markt)
       </fix>
     </changelog>
   </subsection>
