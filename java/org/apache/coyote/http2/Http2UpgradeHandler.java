@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.WebConnection;
 
 import org.apache.coyote.Adapter;
-import org.apache.coyote.CloseNowException;
 import org.apache.coyote.ProtocolException;
 import org.apache.coyote.Request;
 import org.apache.coyote.http11.upgrade.InternalHttpUpgradeHandler;
@@ -836,9 +835,7 @@ public class Http2UpgradeHandler extends AbstractStream implements InternalHttpU
             do {
                 synchronized (this) {
                     if (!stream.canWrite()) {
-                        throw new CloseNowException(
-                                sm.getString("upgradeHandler.stream.notWritable",
-                                        stream.getConnectionId(), stream.getIdentifier()));
+                        stream.doStreamCancel(sm.getString("upgradeHandler.stream.notWritable"), Http2Error.STREAM_CLOSED);
                     }
                     long windowSize = getWindowSize();
                     if (windowSize < 1 || backLogSize > 0) {
@@ -895,17 +892,28 @@ public class Http2UpgradeHandler extends AbstractStream implements InternalHttpU
                                 tracker = backLogStreams.get(stream);
                             }
                             if (tracker != null && tracker.getUnusedAllocation() == 0) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug(sm.getString("upgradeHandler.noAllocation",
-                                            connectionId, stream.getIdentifier()));
+                                String msg;
+                                Http2Error error;
+                                if (stream.isActive()) {
+                                    if (log.isDebugEnabled()) {
+                                        log.debug(sm.getString("upgradeHandler.noAllocation",
+                                                connectionId, stream.getIdentifier()));
+                                    }
+                                    // No allocation
+                                    // Close the connection. Do this first since
+                                    // closing the stream will raise an exception.
+                                    close();
+                                    msg = sm.getString("stream.writeTimeout");
+                                    error = Http2Error.ENHANCE_YOUR_CALM;
+                                } else {
+                                    msg = sm.getString("stream.clientCancel");
+                                    error = Http2Error.STREAM_CLOSED;
                                 }
-                                // No allocation
-                                // Close the connection. Do this first since
-                                // closing the stream will raise an exception
-                                close();
-                                // Close the stream (in app code so need to
-                                // signal to app stream is closing)
-                                stream.doWriteTimeout();
+                                // Close the stream
+                                // This thread is in application code so need
+                                // to signal to the application that the
+                                // stream is closing
+                                stream.doStreamCancel(msg, error);
                             }
                         } catch (InterruptedException e) {
                             throw new IOException(sm.getString(
@@ -1559,16 +1567,6 @@ public class Http2UpgradeHandler extends AbstractStream implements InternalHttpU
             stream.checkState(FrameType.HEADERS);
             stream.receivedStartOfHeaders(headersEndStream);
             closeIdleStreams(streamId);
-            if (localSettings.getMaxConcurrentStreams() < activeRemoteStreamCount.incrementAndGet()) {
-                setConnectionTimeoutForStreamCount(activeRemoteStreamCount.decrementAndGet());
-                // Ignoring maxConcurrentStreams increases the overhead count
-                increaseOverheadCount();
-                throw new StreamException(sm.getString("upgradeHandler.tooManyRemoteStreams",
-                        Long.toString(localSettings.getMaxConcurrentStreams())),
-                        Http2Error.REFUSED_STREAM, streamId);
-            }
-            // Valid new stream reduces the overhead count
-            reduceOverheadCount();
             return stream;
         } else {
             if (log.isDebugEnabled()) {
@@ -1636,12 +1634,24 @@ public class Http2UpgradeHandler extends AbstractStream implements InternalHttpU
 
 
     @Override
-    public void headersEnd(int streamId) throws ConnectionException {
+    public void headersEnd(int streamId) throws Http2Exception {
         Stream stream = getStream(streamId, connectionState.get().isNewStreamAllowed());
         if (stream != null) {
             setMaxProcessedStream(streamId);
             if (stream.isActive()) {
                 if (stream.receivedEndOfHeaders()) {
+
+                    if (localSettings.getMaxConcurrentStreams() < activeRemoteStreamCount.incrementAndGet()) {
+                        setConnectionTimeoutForStreamCount(activeRemoteStreamCount.decrementAndGet());
+                        // Ignoring maxConcurrentStreams increases the overhead count
+                        increaseOverheadCount();
+                        throw new StreamException(sm.getString("upgradeHandler.tooManyRemoteStreams",
+                                Long.toString(localSettings.getMaxConcurrentStreams())),
+                                Http2Error.REFUSED_STREAM, streamId);
+                    }
+                    // Valid new stream reduces the overhead count
+                    reduceOverheadCount();
+
                     processStreamOnContainerThread(stream);
                 }
             }
@@ -1659,8 +1669,12 @@ public class Http2UpgradeHandler extends AbstractStream implements InternalHttpU
     @Override
     public void reset(int streamId, long errorCode) throws Http2Exception  {
         Stream stream = getStream(streamId, true);
+        boolean active = stream.isActive();
         stream.checkState(FrameType.RST);
         stream.receiveReset(errorCode);
+        if (active) {
+            activeRemoteStreamCount.decrementAndGet();
+        }
     }
 
 
