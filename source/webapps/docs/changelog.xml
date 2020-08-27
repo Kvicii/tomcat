@@ -82,6 +82,11 @@
         associated code for clarity.
         Based on a patch provided by Milo van der Zee. (markt)
       </fix>
+      <fix>
+        Correct the path vaidation to allow the use of the file system root for
+        the <code>docBase</code> attribute of a <code>Context</code>. Note that
+        such a configuration should be used with caution. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -167,6 +172,26 @@
         <bug>64645</bug>: Use a non-zero exit code if the
         <code>service.bat</code> does not complete normally. (markt)
       </fix>
+      <add>
+        Update the internal fork of Apache Commons BCEL to 6.5.0. Code clean-up
+        only. (markt)
+      </add>
+      <add>
+        Update the internal fork of Apache Commons Codec to 53c93d0 (2020-08-18,
+        1.15-SNAPSHOT). Code clean-up. (markt)
+      </add>
+      <add>
+        Update the internal fork of Apache Commons FileUpload to c25a4e3
+        (2020-08-26, 2.0-SNAPSHOT). Code clean-up and RFC 2231 support. (markt)
+      </add>
+      <add>
+        Update the internal fork of Apache Commons Pool to 2.8.1. Code clean-up
+        and improved abandoned pool handling. (markt)
+      </add>
+      <add>
+        Update the internal fork of Apache Commons DBCP to 6d232e5 (2020-08-11,
+        2.8.0-SNAPSHOT). Code clean-up various bug fixes. (markt)
+      </add>
     </changelog>
   </subsection>
 </section>

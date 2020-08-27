@@ -297,14 +297,19 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
 
     void doStreamCancel(String msg, Http2Error error) throws CloseNowException {
+        // Avoid NPEs on duplicate cancellations
+        StreamOutputBuffer streamOutputBuffer = this.streamOutputBuffer;
+        Response coyoteResponse = this.coyoteResponse;
         StreamException se = new StreamException(msg, error, getIdAsInt());
-        // Prevent the application making further writes
-        streamOutputBuffer.closed = true;
-        // Prevent Tomcat's error handling trying to write
-        coyoteResponse.setError();
-        coyoteResponse.setErrorReported();
-        // Trigger a reset once control returns to Tomcat
-        streamOutputBuffer.reset = se;
+        if (streamOutputBuffer != null && coyoteResponse != null) {
+            // Prevent the application making further writes
+            streamOutputBuffer.closed = true;
+            // Prevent Tomcat's error handling trying to write
+            coyoteResponse.setError();
+            coyoteResponse.setErrorReported();
+            // Trigger a reset once control returns to Tomcat
+            streamOutputBuffer.reset = se;
+        }
         throw new CloseNowException(msg, se);
     }
 
@@ -594,16 +599,30 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
 
     final void receivedEndOfStream() throws ConnectionException {
-        long contentLengthHeader = coyoteRequest.getContentLengthLong();
-        if (contentLengthHeader > -1 && contentLengthReceived != contentLengthHeader) {
+        if (isContentLengthInconsistent()) {
             throw new ConnectionException(sm.getString("stream.header.contentLength",
-                    getConnectionId(), getIdentifier(), Long.valueOf(contentLengthHeader),
+                    getConnectionId(), getIdentifier(),
+                    Long.valueOf(coyoteRequest.getContentLengthLong()),
                     Long.valueOf(contentLengthReceived)), Http2Error.PROTOCOL_ERROR);
         }
         state.receivedEndOfStream();
         if (inputBuffer != null) {
             inputBuffer.notifyEof();
         }
+    }
+
+
+    final boolean isContentLengthInconsistent() {
+        Request coyoteRequest = this.coyoteRequest;
+        // May be null when processing trailer headers after stream has been
+        // closed.
+        if (coyoteRequest != null) {
+            long contentLengthHeader = coyoteRequest.getContentLengthLong();
+            if (contentLengthHeader > -1 && contentLengthReceived != contentLengthHeader) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -704,6 +723,9 @@ public class Stream extends AbstractStream implements HeaderEmitter {
      * Stream instances are retained for a period after the Stream closes.
      */
     final void recycle() {
+        if (log.isDebugEnabled()) {
+            log.debug(sm.getString("stream.recycle", getConnectionId(), getIdentifier()));
+        }
         coyoteRequest = null;
         cookieHeader = null;
         coyoteResponse = null;
