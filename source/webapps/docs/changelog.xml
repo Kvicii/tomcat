@@ -87,6 +87,14 @@
         the <code>docBase</code> attribute of a <code>Context</code>. Note that
         such a configuration should be used with caution. (markt)
       </fix>
+      <add>
+        Added filtering expression for requests that are not supposed to use
+        session in <code>PersistentValve</code>. (kfujino)
+      </add>
+      <fix>
+        Use the correct method to calculate session idle time in
+        <code>PersistentValve</code>. (kfujino)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -144,6 +152,12 @@
         Fix a potential issue where the write lock for a WebSocket connection
         may not be released if an exception occurs during the write. (markt)
       </fix>
+      <add>
+        <bug>64644</bug>: Add support for a read idle timeout and a write idle
+        timeout to the WebSocket session via custom properties in the user
+        properties instance associated with the session. Based on a pull request
+        by sakshamverma. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Web applications">
@@ -170,6 +184,9 @@
         Extracted CSS styles from the Manager we application for better code
         maintenance and replaced the GIF logo with SVG. (isapir)
       </fix>
+      <add>
+        Add document for <code>PersistentValve</code>. (kfujino)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Other">
