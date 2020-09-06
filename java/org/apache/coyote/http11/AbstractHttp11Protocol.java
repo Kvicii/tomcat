@@ -18,6 +18,7 @@ package org.apache.coyote.http11;
 
 import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.CompressionConfig;
+import org.apache.coyote.ContinueResponseTiming;
 import org.apache.coyote.Processor;
 import org.apache.coyote.Request;
 import org.apache.coyote.Response;
@@ -93,6 +94,18 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
 
     // ------------------------------------------------ HTTP specific properties
     // ------------------------------------------ managed in the ProtocolHandler
+
+    private ContinueResponseTiming continueResponseTiming = ContinueResponseTiming.IMMEDIATELY;
+    public String getContinueResponseTiming() {
+        return continueResponseTiming.toString();
+    }
+    public void setContinueResponseTiming(String continueResponseTiming) {
+        this.continueResponseTiming = ContinueResponseTiming.fromString(continueResponseTiming);
+    }
+    public ContinueResponseTiming getContinueResponseTimingInternal() {
+        return continueResponseTiming;
+    }
+
 
     private boolean useKeepAliveResponseHeader = true;
 
