@@ -95,6 +95,18 @@
         Use the correct method to calculate session idle time in
         <code>PersistentValve</code>. (kfujino)
       </fix>
+      <fix>
+        <bug>64712</bug>: The JASPIC authenticator now checks the
+        <code>ServerAuthModule</code> for
+        <code>jakarta.servlet.http.authType</code> and, if present, uses the
+        value provided. Based on a patch by Robert Rodewald. (markt)
+      </fix>
+      <fix>
+        <bug>64713</bug>: The JASPIC authenticator now checks the value of
+        <code>jakarta.servlet.http.registerSession</code> set by the
+        <code>ServerAuthModule</code> when decideing whether or nor to register
+        the session. Based on a patch by Robert Rodewald. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -110,6 +122,12 @@
         Refactor the implementation of
         <code>ServletInputStream.available()</code> to provide a more accurate
         return value, particularly when end of stream has been reached. (markt)
+      </fix>
+      <fix>
+        <bug>64614</bug>: Improve compatibility with FIPS keystores. When a FIPS
+        keystore is configured and the keystore contains multiple keys, the
+        alias attribute will be ignored and the key used will be implementation
+        dependent. (jfclere)
       </fix>
       <fix>
         <bug>64621</bug>: Improve handling HTTP/2 stream reset frames received
@@ -131,7 +149,7 @@
         client. (markt)
       </fix>
       <fix>
-        Improve handling of HTTP/2 stream level flow control errors and notidy
+        Improve handling of HTTP/2 stream level flow control errors and notify
         the stream immediately if it is waiting for an allocation when the flow
         control error occurs. (markt)
       </fix>
@@ -144,6 +162,15 @@
         Ensure that window update frames are sent for HTTP/2 connections and
         streams to account for DATA frames containing zero-length padding.
         (markt)
+      </fix>
+      <fix>
+        <bug>64710</bug>: Revert the changes to reduce the memory footprint of
+        closed HTTP/2 streams as they triggered multiple regressions in the form
+        of <code>NullPointerException</code>s. (markt)
+      </fix>
+      <fix>
+        Ensure that the HTTP/2 overhead protection check is performed after
+        each HTTP/2 frame is processed. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -226,6 +253,10 @@
         Update the internal fork of Apache Commons DBCP to 6d232e5 (2020-08-11,
         2.8.0-SNAPSHOT). Code clean-up various bug fixes. (markt)
       </add>
+      <update>
+        Update the packaged version of the Tomcat Native Library to 1.2.25.
+        (markt)
+      </update>
     </changelog>
   </subsection>
 </section>

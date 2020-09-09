@@ -222,7 +222,7 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
     void receiveReset(long errorCode) {
         if (log.isDebugEnabled()) {
-            log.debug(sm.getString("stream.reset.debug", getConnectionId(), getIdentifier(),
+            log.debug(sm.getString("stream.reset.receive", getConnectionId(), getIdentifier(),
                     Long.toString(errorCode)));
         }
         // Set the new state first since read and write both check this
@@ -297,19 +297,14 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
 
     void doStreamCancel(String msg, Http2Error error) throws CloseNowException {
-        // Avoid NPEs on duplicate cancellations
-        StreamOutputBuffer streamOutputBuffer = this.streamOutputBuffer;
-        Response coyoteResponse = this.coyoteResponse;
         StreamException se = new StreamException(msg, error, getIdAsInt());
-        if (streamOutputBuffer != null && coyoteResponse != null) {
-            // Prevent the application making further writes
-            streamOutputBuffer.closed = true;
-            // Prevent Tomcat's error handling trying to write
-            coyoteResponse.setError();
-            coyoteResponse.setErrorReported();
-            // Trigger a reset once control returns to Tomcat
-            streamOutputBuffer.reset = se;
-        }
+        // Prevent the application making further writes
+        streamOutputBuffer.closed = true;
+        // Prevent Tomcat's error handling trying to write
+        coyoteResponse.setError();
+        coyoteResponse.setErrorReported();
+        // Trigger a reset once control returns to Tomcat
+        streamOutputBuffer.reset = se;
         throw new CloseNowException(msg, se);
     }
 
@@ -365,6 +360,11 @@ public class Stream extends AbstractStream implements HeaderEmitter {
             // Don't bother processing the header since the stream is going to
             // be reset anyway
             return;
+        }
+
+        if (name.length() == 0) {
+            throw new HpackException(sm.getString("stream.header.empty",
+                    getConnectionId(), getIdentifier()));
         }
 
         boolean pseudoHeader = name.charAt(0) == ':';
@@ -471,7 +471,7 @@ public class Stream extends AbstractStream implements HeaderEmitter {
                         "stream.header.unknownPseudoHeader", getConnectionId(), getIdentifier(),
                         name), Http2Error.PROTOCOL_ERROR, getIdAsInt());
             }
-            // Assume other HTTP header
+
             coyoteRequest.getMimeHeaders().addValue(name).setString(value);
         }
         }
@@ -613,14 +613,9 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
 
     final boolean isContentLengthInconsistent() {
-        Request coyoteRequest = this.coyoteRequest;
-        // May be null when processing trailer headers after stream has been
-        // closed.
-        if (coyoteRequest != null) {
-            long contentLengthHeader = coyoteRequest.getContentLengthLong();
-            if (contentLengthHeader > -1 && contentLengthReceived != contentLengthHeader) {
-                return true;
-            }
+        long contentLengthHeader = coyoteRequest.getContentLengthLong();
+        if (contentLengthHeader > -1 && contentLengthReceived != contentLengthHeader) {
+            return true;
         }
         return false;
     }
@@ -726,12 +721,15 @@ public class Stream extends AbstractStream implements HeaderEmitter {
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("stream.recycle", getConnectionId(), getIdentifier()));
         }
+        /*
+         * Temporarily disabled due to multiple regressions (NPEs)
         coyoteRequest = null;
         cookieHeader = null;
         coyoteResponse = null;
         inputBuffer = null;
         streamOutputBuffer = null;
         http2OutputBuffer = null;
+        */
     }
 
 
