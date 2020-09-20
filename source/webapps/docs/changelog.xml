@@ -44,7 +44,83 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.58 (markt)" rtext="in development">
+<section name="Tomcat 8.5.59 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        Fix race condition when saving and recycling session in
+        <code>PersistentValve</code>. (kfujino)
+      </fix>
+      <update>
+        Deprecate the JDBCRealm. (markt)
+      </update>
+      <fix>
+        Correct numerous spellings throughout the code base. Based on a pull
+        request from John Bampton. (markt)
+      </fix>
+      <fix>
+        <bug>64715</bug>: Add PasswordValidationCallback to the JASPIC
+        implementation. Patch provided by Robert Rodewald. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Do not send an HTTP/2 PING frame to measure round-trip time when it is
+        known that the HTTP/2 connection is not in a good state. (markt)
+      </fix>
+      <fix>
+        <bug>64743</bug>: Correct a regression introduced in 8.5.57 that
+        caused a <code>Connection: close</code> header to be added to the
+        response if the Connector was configured with
+        <code>maxSwallowSize=-1</code>. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        Use lazy instantiation to improve the performance when working with
+        listeners added to the <code>ELContext</code>. Pull request provided by
+        Thomas Andraschko. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <add>
+        Configure the Manager and Host Manager applications to set
+        <code>SameSite=strict</code> for all cookies, including session cookies,
+        created by the application. (markt)
+      </add>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <update>
+        Update to Commons Daemon 1.2.3. This adds support to jsvc for
+        <code>--enable-preview</code> and native memory tracking (Procrun
+        already supported these features), adds some addition debug logging and
+        adds a new feature to Procrun that outputs the command to (re-)configure
+        the service with the current settings. (markt)
+      </update>
+      <add>
+        When building, only rebuild JAR files if the contents has changed.
+        (markt)
+      </add>
+      <add>
+        Improvements to Chinese translations. Pull request provided by Yang
+        Yang. (markt)
+      </add>
+      <add>
+        Expand coverage of Russian translations. Pull request provided by
+        Nikolay Gribanov. (markt)
+      </add>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.58 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -83,7 +159,7 @@
         Based on a patch provided by Milo van der Zee. (markt)
       </fix>
       <fix>
-        Correct the path vaidation to allow the use of the file system root for
+        Correct the path validation to allow the use of the file system root for
         the <code>docBase</code> attribute of a <code>Context</code>. Note that
         such a configuration should be used with caution. (markt)
       </fix>
@@ -104,7 +180,7 @@
       <fix>
         <bug>64713</bug>: The JASPIC authenticator now checks the value of
         <code>jakarta.servlet.http.registerSession</code> set by the
-        <code>ServerAuthModule</code> when decideing whether or nor to register
+        <code>ServerAuthModule</code> when deciding whether or nor to register
         the session. Based on a patch by Robert Rodewald. (markt)
       </fix>
     </changelog>
@@ -211,7 +287,7 @@
         (schultz)
       </fix>
       <fix>
-        Remove the out of date functional specification secton from the
+        Remove the out of date functional specification section from the
         documentation web application. (markt)
       </fix>
       <fix>
