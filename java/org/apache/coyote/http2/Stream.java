@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.coyote.ActionCode;
@@ -43,7 +42,7 @@ import org.apache.tomcat.util.net.ApplicationBufferHandler;
 import org.apache.tomcat.util.net.WriteBuffer;
 import org.apache.tomcat.util.res.StringManager;
 
-public class Stream extends AbstractStream implements HeaderEmitter {
+public class Stream extends AbstractNonZeroStream implements HeaderEmitter {
 
     private static final Log log = LogFactory.getLog(Stream.class);
     private static final StringManager sm = StringManager.getManager(Stream.class);
@@ -64,11 +63,9 @@ public class Stream extends AbstractStream implements HeaderEmitter {
         ACK_HEADERS = response.getMimeHeaders();
     }
 
-    private volatile int weight = Constants.DEFAULT_WEIGHT;
     private volatile long contentLengthReceived = 0;
 
     private final Http2UpgradeHandler handler;
-    private final StreamStateMachine state;
     private final WindowAllocationManager allocationManager = new WindowAllocationManager(this);
 
     // State machine would be too much overhead
@@ -92,11 +89,10 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
 
     public Stream(Integer identifier, Http2UpgradeHandler handler, Request coyoteRequest) {
-        super(identifier);
+        super(handler.getConnectionId(), identifier);
         this.handler = handler;
         handler.addChild(this);
         setWindowSize(handler.getRemoteSettings().getInitialWindowSize());
-        state = new StreamStateMachine(this);
         if (coyoteRequest == null) {
             // HTTP/2 new request
             this.coyoteRequest = new Request();
@@ -173,54 +169,7 @@ public class Stream extends AbstractStream implements HeaderEmitter {
     }
 
 
-    void rePrioritise(AbstractStream parent, boolean exclusive, int weight) {
-        if (log.isDebugEnabled()) {
-            log.debug(sm.getString("stream.reprioritisation.debug",
-                    getConnectionId(), getIdAsString(), Boolean.toString(exclusive),
-                    parent.getIdAsString(), Integer.toString(weight)));
-        }
-
-        // Check if new parent is a descendant of this stream
-        if (isDescendant(parent)) {
-            parent.detachFromParent();
-            // Cast is always safe since any descendant of this stream must be
-            // an instance of Stream
-            getParentStream().addChild((Stream) parent);
-        }
-
-        if (exclusive) {
-            // Need to move children of the new parent to be children of this
-            // stream. Slightly convoluted to avoid concurrent modification.
-            Iterator<Stream> parentsChildren = parent.getChildStreams().iterator();
-            while (parentsChildren.hasNext()) {
-                Stream parentsChild = parentsChildren.next();
-                parentsChildren.remove();
-                this.addChild(parentsChild);
-            }
-        }
-        detachFromParent();
-        parent.addChild(this);
-        this.weight = weight;
-    }
-
-
-    /*
-     * Used when removing closed streams from the tree and we know there is no
-     * need to check for circular references.
-     */
-    final void rePrioritise(AbstractStream parent, int weight) {
-        if (log.isDebugEnabled()) {
-            log.debug(sm.getString("stream.reprioritisation.debug",
-                    getConnectionId(), getIdAsString(), Boolean.FALSE,
-                    parent.getIdAsString(), Integer.toString(weight)));
-        }
-
-        parent.addChild(this);
-        this.weight = weight;
-    }
-
-
-    void receiveReset(long errorCode) {
+    final void receiveReset(long errorCode) {
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("stream.reset.receive", getConnectionId(), getIdAsString(),
                     Long.toString(errorCode)));
@@ -240,13 +189,8 @@ public class Stream extends AbstractStream implements HeaderEmitter {
     }
 
 
-    void checkState(FrameType frameType) throws Http2Exception {
-        state.checkFrameType(frameType);
-    }
-
-
     @Override
-    protected synchronized void incrementWindowSize(int windowSizeIncrement) throws Http2Exception {
+    protected final synchronized void incrementWindowSize(int windowSizeIncrement) throws Http2Exception {
         // If this is zero then any thread that has been trying to write for
         // this stream will be waiting. Notify that thread it can continue. Use
         // notify all even though only one thread is waiting to be on the safe
@@ -534,13 +478,7 @@ public class Stream extends AbstractStream implements HeaderEmitter {
     }
 
 
-    @Override
-    protected int getWeight() {
-        return weight;
-    }
-
-
-    Request getCoyoteRequest() {
+    final Request getCoyoteRequest() {
         return coyoteRequest;
     }
 
@@ -667,12 +605,7 @@ public class Stream extends AbstractStream implements HeaderEmitter {
     }
 
 
-    boolean isClosedFinal() {
-        return state.isClosedFinal();
-    }
-
-
-    void closeIfIdle() {
+    final void closeIfIdle() {
         state.closeIfIdle();
     }
 
@@ -712,24 +645,17 @@ public class Stream extends AbstractStream implements HeaderEmitter {
 
     /*
      * This method is called recycle for consistency with the rest of the Tomcat
-     * code base. Currently, it only sets references to null for the purposes of
-     * reducing memory footprint. It does not fully recycle the Stream ready for
-     * re-use since Stream objects are not re-used. This is useful because
-     * Stream instances are retained for a period after the Stream closes.
+     * code base. Currently, it calls the handler to replace this stream with an
+     * implementation that uses less memory. It does not fully recycle the
+     * Stream ready for re-use since Stream objects are not re-used. This is
+     * useful because Stream instances are retained for a period after the
+     * Stream closes.
      */
     final void recycle() {
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("stream.recycle", getConnectionId(), getIdAsString()));
         }
-        /*
-         * Temporarily disabled due to multiple regressions (NPEs)
-        coyoteRequest = null;
-        cookieHeader = null;
-        coyoteResponse = null;
-        inputBuffer = null;
-        streamOutputBuffer = null;
-        http2OutputBuffer = null;
-        */
+        handler.replaceStream(this, new RecycledStream(getConnectionId(), getIdentifier(), state));
     }
 
 

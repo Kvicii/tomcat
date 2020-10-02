@@ -67,6 +67,18 @@
         <code>NullpointerException</code> when failing to connect to the
         database. (kfujino)
       </fix>
+      <fix>
+        <bug>64735</bug>: Ensure that none of the methods on a
+        <code>ServletContext</code> instance always fail when running under a
+        SecurityManager. Pull request provided by Kyle Stiemann. (markt)
+      </fix>
+      <fix>
+        <bug>64765</bug>: Ensure that the number of currently processing threads
+        is tracked correctly when a web application is undeployed, long running
+        requests are being processed and
+        <code>renewThreadsWhenStoppingContext</code> is enabled for the web
+        application. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -89,6 +101,15 @@
         Correct some double counting in the code that tracks the number of
         in-flight asynchronous requests. The tracking enables Tomcat to shutdown
         gracefully when asynchronous processing is in use. (markt)
+      </fix>
+      <fix>
+        Don't send the Keep-Alive response header if the connection has been
+        explicitly closed. (markt)
+      </fix>
+      <fix>
+        Refactor the handling of closed HTTP/2 streams to reduce the heap usage
+        associated with used streams and to retain information for more streams
+        in the priority tree. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -136,10 +157,14 @@
         Expand coverage of Russian translations. Pull request provided by
         Nikolay Gribanov. (markt)
       </add>
+      <fix>
+        Fix running service.bat when called from <code>$CATALINA_HOME</code>.
+        (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
-<section name="Tomcat 8.5.58 (markt)" rtext="release in progress">
+<section name="Tomcat 8.5.58 (markt)" rtext="2020-09-15">
   <subsection name="Catalina">
     <changelog>
       <fix>
