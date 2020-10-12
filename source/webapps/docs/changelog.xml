@@ -44,7 +44,49 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.59 (markt)" rtext="in development">
+<section name="Tomcat 8.5.60 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>55559</bug>: Add a new attribute, <code>localJndiResource</code>,
+        that allows a UserDatabaseRealm to obtain a UserDatabase instance from
+        the local (web application) JNDI context rather than the global JNDI
+        context. This option is only useful when the Realm is defined on the
+        Context. (markt)
+      </fix>
+      <update>
+        Add connection pooling to JNDI realm. (remm)
+      </update>
+    </changelog>
+  </subsection>
+  <subseciton name="Coyote">
+    <changelog>
+      <fix>
+        Refactor the HTTP/2 window update handling for padding in data frames to
+        ensure that the connection window is correctly updated after a data
+        frame with zero length padding is received. (markt)
+      </fix>
+      <fix>
+        Fix processing of URIs with %nn encoded solidus characters when
+        <code>encodedSolidusHandling</code> was set to <code>passthrough</code>
+        and the encoded solidus was preceeded by other %nn encoded characters.
+        Based on a pull request by willmeck. (markt)
+      </fix>
+      <fix>
+        Implement a partial fix for <bug>63362</bug> that adds collection of
+        request statistics for HTTP/2 requests. (markt)
+      </fix>
+    </changelog>
+  </subseciton>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        <bug>64799</bug>: Added missing resources to host-manager web app. (isapir)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.59 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -78,6 +120,16 @@
         requests are being processed and
         <code>renewThreadsWhenStoppingContext</code> is enabled for the web
         application. (markt)
+      </fix>
+      <add>
+        Improve the error messages when running under JPMS without the necessary
+        options to enable reflection required by the memory leak prevention /
+        detection code. (markt)
+      </add>
+      <fix>
+        When estimating the size of a resource in the static resource cache,
+        include a specific allowance for the path to the resource. Based on a
+        pull request by blueSky1825821. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -161,6 +213,26 @@
         Fix running service.bat when called from <code>$CATALINA_HOME</code>.
         (markt)
       </fix>
+      <fix>
+        Complete the fix for <bug>63815</bug>. Users wishing to use system
+        properties that require quoting with <code>catalina.sh</code> and the
+        <code>debug</code> option must use a JRE that includes the fix for <a
+        href="https://bugs.openjdk.java.net/browse/JDK-8234808">JDK-8234808</a>.
+        (markt)
+      </fix>
+      <add>
+        Improvements to Chinese translations. Provided by leeyazhou. (markt)
+      </add>
+      <add>
+        Improvements to French translations. (remm)
+      </add>
+      <add>
+        Improvements to Korean translations. (woonsan)
+      </add>
+      <add>
+        Improvements to Spanish translations. Provided by Andrewlanecarr.
+        (markt)
+      </add>
     </changelog>
   </subsection>
 </section>

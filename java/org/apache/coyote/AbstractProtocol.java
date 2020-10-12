@@ -16,6 +16,7 @@
  */
 package org.apache.coyote;
 
+import org.apache.coyote.http2.Http2Protocol;
 import org.apache.juli.logging.Log;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.ExceptionUtils;
@@ -59,12 +60,6 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
      * port binding.
      */
     private static final AtomicInteger nameCounter = new AtomicInteger(0);
-
-
-    /**
-     * Name of MBean for the Global Request Processor.
-     */
-    protected ObjectName rgOname = null;
 
 
     /**
@@ -135,6 +130,14 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
 
     // ------------------------------- Properties managed by the ProtocolHandler
+
+    /**
+     * Name of MBean for the Global Request Processor.
+     */
+    protected ObjectName rgOname = null;
+    public ObjectName getGlobalRequestProcessorMBeanName() {
+        return rgOname;
+    }
 
     /**
      * The adapter provides the link between the ProtocolHandler and the
@@ -649,7 +652,8 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         }
 
         if (this.domain != null) {
-            rgOname = new ObjectName(domain + ":type=GlobalRequestProcessor,name=" + getName());
+            ObjectName rgOname = new ObjectName(domain + ":type=GlobalRequestProcessor,name=" + getName());
+            this.rgOname = rgOname;
             Registry.getRegistry(null, null).registerComponent(
                     getHandler().getGlobal(), rgOname, null);
         }
@@ -659,6 +663,17 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
         endpoint.setDomain(domain);
 
         endpoint.init();    // endpoint的init
+
+        UpgradeProtocol[] upgradeProtocols = findUpgradeProtocols();
+        for (UpgradeProtocol upgradeProtocol : upgradeProtocols) {
+            // Need to do this as we can't add methods to UpgradeProtocol
+            // without running the risk of breaking a custom upgrade protocol
+            if (upgradeProtocol instanceof Http2Protocol) {
+                // Implementation note: Failure of one upgrade protocol fails the
+                // whole Connector
+                ((Http2Protocol) upgradeProtocol).init();
+            }
+        }
     }
 
 
@@ -723,6 +738,20 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             getLog().info(sm.getString("abstractProtocolHandler.destroy", getName()));
         }
 
+        UpgradeProtocol[] upgradeProtocols = findUpgradeProtocols();
+        for (UpgradeProtocol upgradeProtocol : upgradeProtocols) {
+            try {
+                // Need to do this as we can't add methods to UpgradeProtocol
+                // without running the risk of breaking a custom upgrade protocol
+                if (upgradeProtocol instanceof Http2Protocol) {
+                    ((Http2Protocol) upgradeProtocol).destroy();
+                }
+            } catch (Throwable t) {
+                ExceptionUtils.handleThrowable(t);
+                getLog().error(sm.getString("abstractProtocol.upgradeProtocolDestroyError"), t);
+            }
+        }
+
         try {
             endpoint.destroy();
         } finally {
@@ -740,6 +769,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                 }
             }
 
+            ObjectName rgOname = getGlobalRequestProcessorMBeanName();
             if (rgOname != null) {
                 Registry.getRegistry(null, null).unregisterComponent(rgOname);
             }
@@ -1198,7 +1228,9 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                     size.incrementAndGet();
                 }
             }
-            if (!result) handler.unregister(processor);
+            if (!result){
+                handler.unregister(processor);
+            }
             return result;
         }
 
