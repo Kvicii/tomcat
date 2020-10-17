@@ -57,6 +57,15 @@
       <update>
         Add connection pooling to JNDI realm. (remm)
       </update>
+      <fix>
+        <bug>64805</bug>: Correct imports used by <code>JMXProxyServlet</code>.
+        (markt)
+      </fix>
+      <fix>
+        Fix JNDIRealm pooling problems retrying on another bad connection. Any
+        retries are made on a new connection, just like with the single
+        connection scenario. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subseciton name="Coyote">
@@ -73,8 +82,8 @@
         Based on a pull request by willmeck. (markt)
       </fix>
       <fix>
-        Implement a partial fix for <bug>63362</bug> that adds collection of
-        request statistics for HTTP/2 requests. (markt)
+        <bug>63362</bug>: Add collection of statistics for HTTP/2, WebSocket and
+        connections upgraded via the HTTP upgrade mechanism. (markt)
       </fix>
     </changelog>
   </subseciton>
@@ -86,7 +95,7 @@
     </changelog>
   </subsection>
 </section>
-<section name="Tomcat 8.5.59 (markt)" rtext="release in progress">
+<section name="Tomcat 8.5.59 (markt)" rtext="2020-10-09">
   <subsection name="Catalina">
     <changelog>
       <fix>
