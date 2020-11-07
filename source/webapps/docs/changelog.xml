@@ -72,9 +72,13 @@
         classloader as the thread context classloader, just like for the JAAS
         realm. (remm)
       </fix>
+      <add>
+        <bug>64871</bug>: Log a warning if Tomcat blocks access to a file
+        because it uses symlinks. (markt)
+      </add>
     </changelog>
   </subsection>
-  <subseciton name="Coyote">
+  <subsection name="Coyote">
     <changelog>
       <fix>
         Refactor the HTTP/2 window update handling for padding in data frames to
@@ -91,8 +95,22 @@
         <bug>63362</bug>: Add collection of statistics for HTTP/2, WebSocket and
         connections upgraded via the HTTP upgrade mechanism. (markt)
       </fix>
+      <add>
+        Provide messages for some <code>SocketTimeoutException</code> instances
+        that did not have one. (markt)
+      </add>
+      <add>
+        Add additional debug logging for I/O issues when communicating with the
+        user agent. (markt)
+      </add>
     </changelog>
-  </subseciton>
+  </subsection>
+  <subsection name="WebSocket">
+    <changelog>
+      <bug>64848</bug>: Fix a variation of this memory leak when a write I/O
+      error occurs on a non-container thread. (markt)
+    </changelog>
+  </subsection>
   <subsection name="Web applications">
     <changelog>
       <fix>
@@ -102,6 +120,19 @@
         <bug>64797</bug>: Align manager.xml template file in Host-Manager with
         context.xml of real Manager web application. (isapir)
       </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <add>
+        Improvements to French translations. (remm)
+      </add>
+      <add>
+        Improvements to Korean translations. (woonsan)
+      </add>
+      <add>
+        Improvements to Russian translations. Provided by Azat. (markt)
+      </add>
     </changelog>
   </subsection>
 </section>
@@ -394,8 +425,9 @@
         provided by Ronny Perinke. (markt)
       </fix>
       <fix>
-        Fix a potential issue where the write lock for a WebSocket connection
-        may not be released if an exception occurs during the write. (markt)
+        <bug>64848</bug>: Fix a potential issue where the write lock for a
+        WebSocket connection may not be released if an exception occurs during
+        the write. (markt)
       </fix>
       <add>
         <bug>64644</bug>: Add support for a read idle timeout and a write idle
