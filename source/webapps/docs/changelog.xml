@@ -76,6 +76,12 @@
         <bug>64871</bug>: Log a warning if Tomcat blocks access to a file
         because it uses symlinks. (markt)
       </add>
+      <update>
+        Rename <code>JDBCStore</code> to <code>DataSourceStore</code>
+        and remove bottlenecks for database backed session store. The
+        <code>JDBCStore</code> is deprecated but remains unchanged. Patch
+        submitted by Philippe Mouawad. (remm)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -103,6 +109,9 @@
         Add additional debug logging for I/O issues when communicating with the
         user agent. (markt)
       </add>
+      <fix>
+        <bug>64830</bug>: Fix concurrency issue in HPACK decoder. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="WebSocket">
@@ -120,6 +129,16 @@
         <bug>64797</bug>: Align manager.xml template file in Host-Manager with
         context.xml of real Manager web application. (isapir)
       </fix>
+      <add>
+        Configure the examples web applications to set
+        <code>SameSite=strict</code> for all cookies, including session cookies,
+        created by the application. (markt)
+      </add>
+      <add>
+        Configure the examples, Manager and Host Manager to use the HTTP header
+        security filter with default settings apart from no HSTS header. Based
+        on a suggestion by Debangshu Kundu. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Other">
