@@ -107,9 +107,25 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        <bug>56181</bug>: Update the RemoteIpValve and RemoteIpFilter so that
+        calls to <code>ServletRequest.getRemoteHost()</code> are consistent with
+        the return value of <code>ServletRequest.getRemoteAddr()</code> rather
+        than always returning a value for the proxy. (markt)
+      </fix>
+      <fix>
         <bug>64921</bug>: Ensure that the <code>LoadBalancerDrainingValve</code>
         uses the correct setting for the secure attribute for any session
         cookies it creates. Based on a pull request by Andreas Kurth. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        Correct a regression in the addition of the HTTP header security filter
+        to the examples web application that prevented the Servlet examples that
+        depend on the asynchronous API from functioning correctly.
+        (kkolinko/markt)
       </fix>
     </changelog>
   </subsection>
@@ -119,6 +135,13 @@
         <bug>64931</bug>: Implement validation of <code>changelog.xml</code>
         file at build time. (kkolinko)
       </add>
+      <update>
+        Update to Maven Ant Resolver Tasks 1.3.0. (markt)
+      </update>
+      <fix>
+        <bug>62695</bug>: Provide SHA-256 and SHA-512 checksums for files
+        published via Maven. (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
