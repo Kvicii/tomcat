@@ -103,7 +103,24 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.61 (markt)" rtext="in development">
+<section name="Tomcat 8.5.62 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <add>
+        <bug>64110</bug>: Add support for additional TLS related request
+        attributes that provide details of the protocols and ciphers requested
+        by a client in the initial TLS handshake. (markt)
+      </add>
+      <add>
+        Let the <code>RemoteCIDRValve</code> inherit from
+        <code>RequestFilterValve</code> and support all of its features.
+        Especially add support for connector specific configuration
+        using <code>addConnectorPort</code>. (rjung)
+      </add>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.61 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -113,9 +130,43 @@
         than always returning a value for the proxy. (markt)
       </fix>
       <fix>
+        <bug>56890</bug>: Align the behaviour of
+        <code>ServletContext.getRealPath(String path)</code> with the recent
+        clarification from the Servlet specification project. If the path
+        parameter does not start with <code>/</code> then Tomcat processes the
+        call as if <code>/</code> is appended to the beginning of the
+        provided path. (markt)
+      </fix>
+      <fix>
         <bug>64921</bug>: Ensure that the <code>LoadBalancerDrainingValve</code>
         uses the correct setting for the secure attribute for any session
         cookies it creates. Based on a pull request by Andreas Kurth. (markt)
+      </fix>
+      <fix>
+        <bug>64947</bug>: Don't assume that the <code>Upgrade</code> header has
+        been set on the <code>HttpServletResponse</code> before any call is made
+        to <code>HttpServletRequest.upgrade()</code>. (markt)
+      </fix>
+      <fix>
+        Ensure that values are not duplicated when manipulating the vary header.
+        Based on a pull request by Fredrik Fall. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        <bug>64944</bug>: Ensure that the bytesSent metric is correctly updated
+        when compression is enabled. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="WebSocket">
+    <changelog>
+      <fix>
+        <bug>64951</bug>: Fix a potential file descriptor leak when WebSocket
+        connections are attempted and fail. Patch provided by Maurizio Adami.
+        (markt)
       </fix>
     </changelog>
   </subsection>
@@ -127,6 +178,14 @@
         depend on the asynchronous API from functioning correctly.
         (kkolinko/markt)
       </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Tribes">
+    <changelog>
+      <scode>
+        Start all core threads when starting the receiver and dispatch
+        interceptor. (kfujino)
+      </scode>
     </changelog>
   </subsection>
   <subsection name="Other">
