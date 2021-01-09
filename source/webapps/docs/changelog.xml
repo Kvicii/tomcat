@@ -153,6 +153,11 @@
         <bug>65033</bug>: Fix JNDI realm error handling when connecting to a
         failed server when pooling was not enabled. (remm)
       </fix>
+      <fix>
+        <bug>65047</bug>: If the <code>AccessLogValve</code> is unable to open
+        the access log file, include information on the current user in the
+        associated log message  (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -162,6 +167,10 @@
         combination with the Servlet non-blocking IO API. It was possible that
         some requests could get dropped. (markt)
       </fix>
+      <fix>
+        <bug>65001</bug>: Fix error handling for exceptions throw from calls
+        to <code>ReadListener</code> and <code>WriteListener</code>. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -170,6 +179,16 @@
         <bug>64965</bug>: <code>JspContextWrapper.findAttribute</code> should
         ignore expired sessions rather than throw an
         <code>IllegalStateException</code>. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        <bug>65007</bug>: Clarify that the commands shown in the TLS
+        documentation for importing a signed TLS certificate from a certificate
+        authority are typical examples that may need to be adjusted in some
+        cases. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -184,6 +203,10 @@
       <add>
         Improvements to Korean translations. (woonsan)
       </add>
+      <update>
+        Update the packaged version of the Tomcat Native Library to 1.2.26.
+        (markt)
+      </update>
     </changelog>
   </subsection>
 </section>
