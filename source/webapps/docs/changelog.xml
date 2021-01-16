@@ -163,6 +163,10 @@
   <subsection name="Coyote">
     <changelog>
       <fix>
+        Additional fix for <bug>64830</bug> to address an edge case that could
+        trigger request corruption with h2c connections. (markt)
+      </fix>
+      <fix>
         <bug>64974</bug>: Improve handling of pipelined HTTP requests in
         combination with the Servlet non-blocking IO API. It was possible that
         some requests could get dropped. (markt)
@@ -207,6 +211,14 @@
         Update the packaged version of the Tomcat Native Library to 1.2.26.
         (markt)
       </update>
+      <add>
+        Update the internal fork of Apache Commons Pool to 2.9.1-SNAPSHOT
+        (2021-01-15). (markt)
+      </add>
+      <add>
+        Update the internal fork of Apache Commons DBCP to 2.9.0-SNAPSHOT
+        (2021-01-15). (markt)
+      </add>
     </changelog>
   </subsection>
 </section>

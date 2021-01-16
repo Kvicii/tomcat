@@ -14,30 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomcat.dbcp.dbcp2;
+package org.apache.tomcat.dbcp.pool2;
 
 /**
- * Exception thrown when a connection's maximum lifetime has been exceeded.
+ * Destroy context provided to object factories via destroyObject methods. Values provide information about why the pool
+ * is asking for a pooled object to be destroyed.
  *
- * @since 2.1
+ * @since 2.9.0
  */
-class LifetimeExceededException extends Exception {
-
-    private static final long serialVersionUID = -3783783104516492659L;
-
-    /**
-     * Create a LifetimeExceededException.
-     */
-    public LifetimeExceededException() {
-    }
-
-    /**
-     * Create a LifetimeExceededException with the given message.
-     *
-     * @param message
-     *            The message with which to create the exception
-     */
-    public LifetimeExceededException(final String message) {
-        super(message);
-    }
+public enum DestroyMode {
+    /** Normal destroy */
+    NORMAL,
+    /** Destroy abandoned object */
+    ABANDONED
 }
