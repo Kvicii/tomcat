@@ -103,7 +103,51 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.62 (markt)" rtext="in development">
+<section name="Tomcat 8.5.64 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        Revert an incorrect fix for a potential resource leak that broke
+        deployment via the Ant deploy task. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        <bug>65118</bug>: Fix a potential <code>NullPointerException</code> when
+        pruning closed HTTP/2 streams from the connection. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Web applications">
+    <changelog>
+      <fix>
+        Remove the restriction that prevented the Manager web application
+        deploying different web applications in parallel. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.63 (markt)" rtext="2021-02-03">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>65106</bug>: Fix the ConfigFileLoader handling of file URIs when
+        running under a security manager on some JREs. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Ensure that SNI provided host names are matched to SSL virtual host
+        configurations in a case insensitive manner. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.62 (markt)" rtext="not released">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -172,7 +216,7 @@
         some requests could get dropped. (markt)
       </fix>
       <fix>
-        <bug>65001</bug>: Fix error handling for exceptions throw from calls
+        <bug>65001</bug>: Fix error handling for exceptions thrown from calls
         to <code>ReadListener</code> and <code>WriteListener</code>. (markt)
       </fix>
       <fix>
@@ -209,7 +253,8 @@
   <subsection name="Other">
     <changelog>
       <add>
-        Improvements to Chinese translations. Provided by leeyazhou. (markt)
+        Improvements to Chinese translations. Provided by leeyazhou and Yi Shen.
+        (markt)
       </add>
       <add>
         Improvements to French translations. (remm)
@@ -238,6 +283,14 @@
       </scode>
       <update>
         Update to Commons Daemon 1.2.4. (markt)
+      </update>
+      <add>
+        Improvements to Russian translations. Provided by Polina and Azat.
+        (markt)
+      </add>
+      <update>
+        Update the NSIS Installer used to build the Windows installer to version
+        3.06.1. (kkolinko)
       </update>
     </changelog>
   </subsection>
