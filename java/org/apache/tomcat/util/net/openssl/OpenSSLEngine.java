@@ -962,8 +962,10 @@ public final class OpenSSLEngine extends SSLEngine implements SSLUtil.ProtocolIn
      * TODO: Check last error after every call to an SSL method and respond
      *       appropriately.
      */
-    private void clearLastError() {
-        SSL.getLastErrorNumber();
+    private static void clearLastError() {
+        while (SSL.getLastErrorNumber() != SSL.SSL_ERROR_NONE) {
+            // Loop until getLastErrorNumber() returns SSL_ERROR_NONE
+        }
     }
 
     private SSLEngineResult.Status getEngineStatus() {

@@ -110,6 +110,17 @@
         Revert an incorrect fix for a potential resource leak that broke
         deployment via the Ant deploy task. (markt)
       </fix>
+      <fix>
+        Ensure that the <code>AsyncListener.onError()</code> event is triggered
+        when a I/O error occurs during non-blocking I/O. There were some cases
+        discovered where this was not happening. (markt)
+      </fix>
+      <add>
+        Make the non-blocking I/O error handling more robust by handling the
+        case where the application code swallows an <code>IOException</code> in
+        <code>WriteListener.onWritePossible()</code> and
+        <code>ReadListener.onDataAvailable()</code>. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -136,6 +147,11 @@
         incomplete if the connection is closed before the response is fully
         written due to a write timeout. (markt)
       </fix>
+      <fix>
+        Related to bug <bug>65131</bug>, make sure all errors from OpenSSL are
+        fully cleared, as there could be more than one error present after
+        an operation (confirmed in the OpenSSL API documentation). (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
@@ -144,6 +160,22 @@
         Remove the restriction that prevented the Manager web application
         deploying different web applications in parallel. (markt)
       </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <add>
+        Improvements to French translations. (remm)
+      </add>
+      <add>
+        Improvements to Korean translations. (woonsan)
+      </add>
+      <add>
+        Improvements to Russian translations. Provided by Azat. (mark)
+      </add>
+      <add>
+        Improvements to Chinese translations. Provided by shawn. (mark)
+      </add>
     </changelog>
   </subsection>
 </section>
