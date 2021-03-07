@@ -103,7 +103,9 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.64 (markt)" rtext="in development">
+<section name="Tomcat 8.5.65 (markt)" rtext="in development">
+</section>
+<section name="Tomcat 8.5.64 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -121,6 +123,18 @@
         <code>WriteListener.onWritePossible()</code> and
         <code>ReadListener.onDataAvailable()</code>. (markt)
       </add>
+      <fix>
+        <bug>64938</bug>: Align the behaviour when <code>null</code> is passed
+        to the <code>ServletResponse</code> methods
+        <code>setCharacterEncoding()</code>, <code>setContentType()</code> and
+        <code>setLocale()</code> with the recent clarification from the Jakarta
+        Servlet project of the expected behaviour in these cases. (markt)
+      </fix>
+      <scode>
+        Make the <code>StandardContext.postWorkDirectory()</code> protected
+        rather than private to help users wishing to customise the default
+        work directory behaviour. (markt)
+      </scode>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -151,6 +165,15 @@
         Related to bug <bug>65131</bug>, make sure all errors from OpenSSL are
         fully cleared, as there could be more than one error present after
         an operation (confirmed in the OpenSSL API documentation). (remm)
+      </fix>
+      <fix>
+        Make handling of OpenSSL read errors more robust when plain text data is
+        reported to be available to read. (markt)
+      </fix>
+      <fix>
+        Correct handling of write errors during non-blocking I/O to ensure that
+        the associated <code>AsyncContext</code> was closed down correctly.
+        (markt)
       </fix>
     </changelog>
   </subsection>

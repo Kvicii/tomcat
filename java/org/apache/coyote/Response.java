@@ -437,7 +437,9 @@ public final class Response {
     public void setLocale(Locale locale) {
 
         if (locale == null) {
-            return;  // throw an exception?
+            this.locale = null;
+            this.contentLanguage = null;
+            return;
         }
 
         // Save the locale for use by getLocale()
@@ -469,15 +471,22 @@ public final class Response {
             return;
         }
         if (characterEncoding == null) {
+            this.charset = null;
+            this.characterEncoding = null;
             return;
         }
 
+        this.characterEncoding = characterEncoding;
         try {
             this.charset = B2CConverter.getCharset(characterEncoding);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
-        this.characterEncoding = characterEncoding;
+    }
+
+
+    public Charset getCharset() {
+        return charset;
     }
 
 
@@ -486,11 +495,6 @@ public final class Response {
      */
     public String getCharacterEncoding() {
         return characterEncoding;
-    }
-
-
-    public Charset getCharset() {
-        return charset;
     }
 
 
@@ -621,8 +625,10 @@ public final class Response {
         headers.clear();
         // Servlet 3.1 non-blocking write listener
         listener = null;
-        fireListener = false;
-        registeredForWrite = false;
+        synchronized (nonBlockingStateLock) {
+            fireListener = false;
+            registeredForWrite = false;
+        }
 
         // update counters
         contentWritten=0;
