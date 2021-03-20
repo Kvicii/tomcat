@@ -104,8 +104,52 @@
   issues do not "pop up" wrt. others).
 -->
 <section name="Tomcat 8.5.65 (markt)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        Avoid NPE when a JNDI reference cannot be resolved in favor of a
+        NamingException. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Improve consistency of OpenSSL error stack handling in the TLS engine,
+        and log all errors found as debug. (remm)
+      </fix>
+      <scode>
+        Re-factor the HTTP/2 implementation classes to better align with 9.0.x
+        and 10.0.x to make maintenance simpler. (markt)
+      </scode>
+      <fix>
+        Ensure that HTTP/2 streams are only recycled once as multiple attempts
+        to recycle an HTTP/2 stream may result in
+        <code>NullPointerException</code>s. (markt)
+      </fix>
+      <scode>
+        Simplify the closing on an HTTP/2 stream when an error condition is
+        present. (markt)
+      </scode>
+      <fix>
+        <bug>65179</bug>: Ensure that the connection level flow control window
+        from the client to the server is updated when handling DATA frames
+        received for completed streams else the flow control window  may become
+        exhausted. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <add>
+        Implement the first phase of reproducible builds. Sequential builds on
+        the same machine now produce identical output provided that the Ant
+        property <code>ant.tstamp.now.iso</code> is set. (markt)
+      </add>
+    </changelog>
+  </subsection>
 </section>
-<section name="Tomcat 8.5.64 (markt)" rtext="release in progress">
+<section name="Tomcat 8.5.64 (markt)" rtext="2021-03-10">
   <subsection name="Catalina">
     <changelog>
       <fix>

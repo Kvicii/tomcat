@@ -50,6 +50,7 @@ import org.apache.coyote.http2.HpackDecoder.HeaderEmitter;
 import org.apache.coyote.http2.Http2Parser.Input;
 import org.apache.coyote.http2.Http2Parser.Output;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.compat.JrePlatform;
 import org.apache.tomcat.util.http.FastHttpDateFormat;
 import org.apache.tomcat.util.http.MimeHeaders;
 import org.apache.tomcat.util.net.TesterSupport;
@@ -58,7 +59,13 @@ import org.apache.tomcat.util.net.TesterSupport;
  * Tests for compliance with the <a href="https://tools.ietf.org/html/rfc7540">
  * HTTP/2 specification</a>.
  */
+@org.junit.runner.RunWith(org.junit.runners.Parameterized.class)
 public abstract class Http2TestBase extends TomcatBaseTest {
+
+    @org.junit.runners.Parameterized.Parameters
+    public static Object[][] data() {
+        return new Object[Integer.getInteger("tomcat.test.http2.loopCount", 1).intValue()][0];
+    }
 
     // Nothing special about this date apart from it being the date I ran the
     // test that demonstrated that most HTTP/2 tests were failing because the
@@ -793,7 +800,7 @@ public abstract class Http2TestBase extends TomcatBaseTest {
         pingHeader[3] = FrameType.PING.getIdByte();
         // Flags
         if (ack) {
-            ByteUtil.setOneBytes(pingHeader, 4, 0x01);
+            setOneBytes(pingHeader, 4, 0x01);
         }
         // Stream
         ByteUtil.set31Bits(pingHeader, 5, streamId);
@@ -868,7 +875,7 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
         // Payload
         ByteUtil.set31Bits(priorityFrame, 9, streamDependencyId);
-        ByteUtil.setOneBytes(priorityFrame, 13, weight);
+        setOneBytes(priorityFrame, 13, weight);
 
         os.write(priorityFrame);
         os.flush();
@@ -941,8 +948,13 @@ public abstract class Http2TestBase extends TomcatBaseTest {
                     connector.getProtocolHandlerClassName().contains("Nio2"));
 
             Assume.assumeTrue("This test is only expected to trigger an exception on Windows",
-                    System.getProperty("os.name").startsWith("Windows"));
+                    JrePlatform.IS_WINDOWS);
         }
+    }
+
+
+    static void setOneBytes(byte[] output, int firstByte, int value) {
+        output[firstByte] = (byte) (value & 0xFF);
     }
 
 
@@ -1031,7 +1043,7 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
         @Override
-        public void endRequestBodyFrame(int streamId) throws Http2Exception {
+        public void endRequestBodyFrame(int streamId, int dataLength) throws Http2Exception {
             if (bodyBuffer != null) {
                 if (bodyBuffer.limit() > 0) {
                     trace.append(lastStreamId + "-Body-");
@@ -1172,10 +1184,10 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
         @Override
-        public void swallowed(int streamId, FrameType frameType, int flags, int size) {
+        public void onSwallowedUnknownFrame(int streamId, int frameTypeId, int flags, int size) {
             trace.append(streamId);
             trace.append(",");
-            trace.append(frameType);
+            trace.append(frameTypeId);
             trace.append(",");
             trace.append(flags);
             trace.append(",");
@@ -1185,11 +1197,10 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
         @Override
-        public void swallowedPadding(int streamId, int paddingLength) {
-            trace.append(streamId);
-            trace.append("-SwallowedPadding-[");
-            trace.append(paddingLength);
-            trace.append("]\n");
+        public void onSwallowedDataFramePayload(int streamId, int swallowedDataBytesCount) {
+            // NO-OP
+            // Many tests swallow request bodies which triggers this
+            // notification. It is added to the trace to reduce noise.
         }
 
 
