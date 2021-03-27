@@ -612,8 +612,8 @@ class Stream extends AbstractNonZeroStream implements HeaderEmitter {
                             se.getError()));
                 }
                 state.sendReset();
-                cancelAllocationRequests();
                 handler.sendStreamReset(se);
+                cancelAllocationRequests();
                 inputBuffer.swallowUnread();
             } catch (IOException ioe) {
                 ConnectionException ce = new ConnectionException(
@@ -643,8 +643,15 @@ class Stream extends AbstractNonZeroStream implements HeaderEmitter {
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("stream.recycle", getConnectionId(), getIdAsString()));
         }
-        handler.replaceStream(
-                this, new RecycledStream(getConnectionId(), getIdentifier(), state, getInputByteBuffer().remaining()));
+        int remaining;
+        // May be null if stream was closed before any DATA frames were processed.
+        ByteBuffer inputByteBuffer = getInputByteBuffer();
+        if (inputByteBuffer == null) {
+            remaining = 0;
+        } else {
+            remaining = inputByteBuffer.remaining();
+        }
+        handler.replaceStream(this, new RecycledStream(getConnectionId(), getIdentifier(), state, remaining));
     }
 
 
@@ -1252,9 +1259,11 @@ class Stream extends AbstractNonZeroStream implements HeaderEmitter {
         }
 
         private final void swallowUnread() throws IOException {
+            synchronized (this) {
+                closed = true;
+            }
             if (inBuffer != null) {
                 synchronized (inBuffer) {
-                    closed = true;
                     int unreadByteCount = inBuffer.position();
                     if (log.isDebugEnabled()) {
                         log.debug(sm.getString("stream.inputBuffer.swallowUnread", Integer.valueOf(unreadByteCount)));

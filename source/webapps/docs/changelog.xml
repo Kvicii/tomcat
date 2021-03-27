@@ -110,6 +110,10 @@
         Avoid NPE when a JNDI reference cannot be resolved in favor of a
         NamingException. (remm)
       </fix>
+      <fix>
+        Avoid using reflection for setting properties on the webapp
+        classloader. Based on a patch submitted by Romain Manni-Bucau. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -132,10 +136,24 @@
         present. (markt)
       </scode>
       <fix>
+        <bug>64771</bug>: Prevent concurrent calls to
+        <code>ServletInputStream.isReady()</code> corrupting the input buffer.
+        (markt)
+      </fix>
+      <fix>
         <bug>65179</bug>: Ensure that the connection level flow control window
         from the client to the server is updated when handling DATA frames
         received for completed streams else the flow control window  may become
         exhausted. (markt)
+      </fix>
+      <fix>
+        <bug>65203</bug>: Fix a regression introduced in 8.5.64 that meant that
+        an error during an asynchronous read broke all future asynchronous reads
+        associated with the same request instance. (markt)
+      </fix>
+      <fix>
+        Disable keep-alive when inconsistent content delimitation is present in
+        a request. (remm)
       </fix>
     </changelog>
   </subsection>
@@ -144,7 +162,21 @@
       <add>
         Implement the first phase of reproducible builds. Sequential builds on
         the same machine now produce identical output provided that the Ant
-        property <code>ant.tstamp.now.iso</code> is set. (markt)
+        property <code>ant.tstamp.now.iso</code> is set. The minimum required
+        Ant version is now 1.9.10. (markt)
+      </add>
+      <add>
+        Improvements to Chinese translations. Provided by Ruan Wenjun. (mark)
+      </add>
+      <add>
+        Improvements to French translations. (remm)
+      </add>
+      <add>
+        Improvements to Japanese translations. Provided by kfujino and
+        Shirayuking. (markt)
+      </add>
+      <add>
+        Improvements to Korean translations. (woonsan)
       </add>
     </changelog>
   </subsection>
