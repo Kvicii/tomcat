@@ -103,7 +103,9 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.65 (markt)" rtext="in development">
+<section name="Tomcat 8.5.66 (markt)" rtext="in development">
+</section>
+<section name="Tomcat 8.5.65 (markt)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -178,6 +180,10 @@
       <add>
         Improvements to Korean translations. (woonsan)
       </add>
+      <update>
+        Update the packaged version of the Tomcat Native Library to 1.2.27.
+        (markt)
+      </update>
     </changelog>
   </subsection>
 </section>
