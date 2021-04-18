@@ -151,13 +151,13 @@ jdt.loc.1=http://archive.eclipse.org/eclipse/downloads/drops4/${jdt.release}/ecj
 jdt.loc.2=http://download.eclipse.org/eclipse/downloads/drops4/${jdt.release}/ecj-${jdt.version}.jar
 
 # ----- Tomcat native library -----
-tomcat-native.version=1.2.27
+tomcat-native.version=1.2.28
 tomcat-native.src.checksum.enabled=true
 tomcat-native.src.checksum.algorithm=SHA-512
-tomcat-native.src.checksum.value=99e356cef89bdc35cfcb98fafe0d5dda8375461382053969509b6b24d9129ca89782bc618c58245980c921abbdb25eece80cb129e33ad06741d22681b84d7742
+tomcat-native.src.checksum.value=16b8659dcd228ea153d05c9ae19e3d97add944315f3b8b42905162d0e4e8a28fd51a172d59d7da8508271ecad0b8ac025a386895565acaf8e2ba11fba77492bb
 tomcat-native.win.checksum.enabled=true
 tomcat-native.win.checksum.algorithm=SHA-512
-tomcat-native.win.checksum.value=90553cb8d74f00e00ac220a18c5c647c5b74f0487020d41efe33beb501c2caac43d77363a7820c2e91ac7a0f23967a2077e704e8db56ad18978780346a642ca3
+tomcat-native.win.checksum.value=a0a7c05ca1b2b873456e2331232f9752b52af23a205e61d14905e0779f4c517563438b45fc36b1a81803f67d47b39e77009e4a4e892a3fd0e548398ed9a69dc3
 tomcat-native.home=${base.path}/tomcat-native-${tomcat-native.version}
 tomcat-native.tar.gz=${tomcat-native.home}/tomcat-native.tar.gz
 tomcat-native.loc.1=${base-tomcat.loc.1}/tomcat-connectors/native/${tomcat-native.version}/source/tomcat-native-${tomcat-native.version}-src.tar.gz
@@ -236,7 +236,7 @@ easymock.home=${base.path}/easymock-${easymock.version}
 easymock.jar=${easymock.home}/easymock-${easymock.version}.jar
 easymock.loc=${base-maven.loc}/org/easymock/easymock/${easymock.version}/easymock-${easymock.version}.jar
 
-# ----- cglib, used by EasyMock, version 3.3 or later -----
+# ----- cglib, used by EasyMock, version 2.2 or later -----
 cglib.version=3.3.0
 cglib.checksum.enabled=true
 cglib.checksum.algorithm=SHA-512
@@ -245,7 +245,7 @@ cglib.home=${base.path}/cglib-${cglib.version}
 cglib.jar=${cglib.home}/cglib-nodep-${cglib.version}.jar
 cglib.loc=${base-maven.loc}/cglib/cglib-nodep/${cglib.version}/cglib-nodep-${cglib.version}.jar
 
-# ----- objenesis, used by EasyMock, version 2.6 or later -----
+# ----- objenesis, used by EasyMock, version 1.2 or later -----
 objenesis.version=2.6
 objenesis.checksum.enabled=true
 objenesis.checksum.algorithm=SHA-512
@@ -253,6 +253,15 @@ objenesis.checksum.value=23a593bded8cb43236faad2018b008da47bf4e29cc60c2e98fd4f2e
 objenesis.home=${base.path}/objenesis-${objenesis.version}
 objenesis.jar=${objenesis.home}/objenesis-${objenesis.version}.jar
 objenesis.loc=${base-maven.loc}/org/objenesis/objenesis/${objenesis.version}/objenesis-${objenesis.version}.jar
+
+# ----- UnboundID, used by unit tests, version 5.1.4 or later -----
+unboundid.version=5.1.4
+unboundid.checksum.enabled=true
+unboundid.checksum.algorithm=SHA-512
+unboundid.checksum.value=04cf7f59eddebdd5b51e5be55021f9d9c667cca6101eac954e7a8d5b51f4c23372cd8f041640157f082435a166b75d85e79252b516130ede7d966dae6d3eae67
+unboundid.home=${base.path}/unboundid-${unboundid.version}
+unboundid.jar=${unboundid.home}/unboundid-ldapsdk-${unboundid.version}.jar
+unboundid.loc=${base-maven.loc}/com/unboundid/unboundid-ldapsdk/${unboundid.version}/unboundid-ldapsdk-${unboundid.version}.jar
 
 # ----- Checkstyle, version 6.16 or later -----
 # Checkstyle 7 requires Java 8

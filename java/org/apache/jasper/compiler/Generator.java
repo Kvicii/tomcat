@@ -138,21 +138,19 @@ class Generator {
      */
     static String quote(String s) {
 
-        if (s == null)
+        if (s == null) {
             return "null";
+        }
 
         return '"' + escape(s) + '"';
     }
 
     /**
-     * @param s
-     *            the input string
+     * @param s     the input string - must not be {@code null}
+     *
      * @return escaped string, per Java rule
      */
     static String escape(String s) {
-
-        if (s == null)
-            return "";
 
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
@@ -257,13 +255,11 @@ class Generator {
             @Override
             public void visit(Node.CustomTag n) throws JasperException {
                 if (n.useTagPlugin()) {
-                    if (n.getAtSTag() != null) {
-                        n.getAtSTag().visit(this);
-                    }
+                    // If a custom tag is configured to use a plug-in
+                    // getAtSTag() and  getAtETag() will always be non-null
+                    n.getAtSTag().visit(this);
                     visitBody(n);
-                    if (n.getAtETag() != null) {
-                        n.getAtETag().visit(this);
-                    }
+                    n.getAtETag().visit(this);
                 } else {
                     visitBody(n);
                 }
@@ -561,13 +557,12 @@ class Generator {
 
     /**
      * Generate preamble package name (shared by servlet and tag handler
-     * preamble generation)
+     * preamble generation). Package is always non-null as neither Servlets nor
+     * tags can use a default package.
      */
     private void genPreamblePackage(String packageName) {
-        if (packageName != null && !packageName.isEmpty()) {
-            out.printil("package " + packageName + ";");
-            out.println();
-        }
+        out.printil("package " + packageName + ";");
+        out.println();
     }
 
     /**
@@ -621,9 +616,6 @@ class Generator {
         Set<String> packages = new HashSet<>();
         Set<String> classes = new HashSet<>();
         for (String importName : imports) {
-            if (importName == null) {
-                continue;
-            }
             String trimmed = importName.trim();
             if (trimmed.endsWith(".*")) {
                 packages.add(trimmed.substring(0, trimmed.length() - 2));
@@ -637,18 +629,16 @@ class Generator {
         out.println();
         out.printil("static {");
         out.pushIndent();
-        if (packages.size() == 0) {
-            out.printin("_jspx_imports_packages = null;");
-            out.println();
-        } else {
-            out.printin("_jspx_imports_packages = new java.util.HashSet<>();");
-            out.println();
-            for (String packageName : packages) {
-                out.printin("_jspx_imports_packages.add(\"");
-                out.print(packageName);
-                out.println("\");");
-            }
+        // Packages is never empty because o.a.j.Constants.STANDARD_IMPORTS
+        // contains 3 packages and is always added to the imports.
+        out.printin("_jspx_imports_packages = new java.util.HashSet<>();");
+        out.println();
+        for (String packageName : packages) {
+            out.printin("_jspx_imports_packages.add(\"");
+            out.print(packageName);
+            out.println("\");");
         }
+        // classes however, may be empty depending on the import declarations
         if (classes.size() == 0) {
             out.printin("_jspx_imports_classes = null;");
             out.println();
@@ -966,9 +956,6 @@ class Generator {
         private String attributeValue(Node.JspAttribute attr, boolean encode,
                 Class<?> expectedType) {
             String v = attr.getValue();
-            if (!attr.isNamedAttribute() && (v == null))
-                return "";
-
             if (attr.isExpression()) {
                 if (encode) {
                     return "org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(String.valueOf("
@@ -1060,16 +1047,11 @@ class Generator {
         @Override
         public void visit(Node.ELExpression n) throws JasperException {
             n.setBeginJavaLine(out.getJavaLine());
-            if (!pageInfo.isELIgnored() && (n.getEL() != null)) {
-                out.printil("out.write("
-                        + elInterpreter.interpreterCall(ctxt, this.isTagFile,
-                                n.getType() + "{" + n.getText() + "}",
-                                String.class, n.getEL().getMapName()) +
-                        ");");
-            } else {
-                out.printil("out.write("
-                        + quote(n.getType() + "{" + n.getText() + "}") + ");");
-            }
+            out.printil("out.write("
+                    + elInterpreter.interpreterCall(ctxt, this.isTagFile,
+                            n.getType() + "{" + n.getText() + "}",
+                            String.class, n.getEL().getMapName()) +
+                    ");");
             n.setEndJavaLine(out.getJavaLine());
         }
 
@@ -1117,24 +1099,21 @@ class Generator {
          * a Named Attribute (&lt;jsp:attribute&gt;), generate the code to evaluate
          * those bodies first.
          * <p>
-         * If parent is null, simply returns.
+         * {@code parent} is assumed to be non-null
          */
         private void prepareParams(Node parent) throws JasperException {
-            if (parent == null)
-                return;
-
             Node.Nodes subelements = parent.getBody();
             if (subelements != null) {
                 for (int i = 0; i < subelements.size(); i++) {
                     Node n = subelements.getNode(i);
-                    if (n instanceof Node.ParamAction) {
-                        Node.Nodes paramSubElements = n.getBody();
-                        for (int j = 0; (paramSubElements != null)
-                                && (j < paramSubElements.size()); j++) {
-                            Node m = paramSubElements.getNode(j);
-                            if (m instanceof Node.NamedAttribute) {
-                                generateNamedAttributeValue((Node.NamedAttribute) m);
-                            }
+                    // Validation during parsing ensures n is an instance of
+                    // Node.ParamAction
+                    Node.Nodes paramSubElements = n.getBody();
+                    for (int j = 0; (paramSubElements != null)
+                            && (j < paramSubElements.size()); j++) {
+                        Node m = paramSubElements.getNode(j);
+                        if (m instanceof Node.NamedAttribute) {
+                            generateNamedAttributeValue((Node.NamedAttribute) m);
                         }
                     }
                 }
