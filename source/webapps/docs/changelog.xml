@@ -118,6 +118,27 @@
         <bug>65235</bug>: Add missing attributes to the MBean descriptor file
         for the <code>RemoteIpValve</code>. (markt)
       </fix>
+      <fix>
+        <bug>65251</bug>: Correct a regression introduced in 8.5.64 that meant
+        that the auto-deployment process may attempt a second, concurrent
+        deployment of a web application that is being deployed by the Manager
+        resulting in one of the deployments failing and errors being reported.
+        (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Ensure that all HTTP requests that contain an invalid character in the
+        protocol component of the request line are rejected with a 400 response
+        rather than some requests being rejected with a 505 response. (markt)
+      </fix>
+      <fix>
+        When generating the error message for an HTTP request with an invalid
+        request line, ensure that all the available data is included in the
+        error message. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -125,6 +146,27 @@
       <scode>
         Review code used to generate Java source from JSPs and tags and remove
         code found to be unnecessary. (markt)
+      </scode>
+      <update>
+        <code>&lt;servlet&gt;</code> entries in web.xml that include a
+        <code>&lt;jsp-file&gt;</code> element and a negative
+        <code>&lt;load-no-startup&gt;</code> element that is not the default
+        value of <code>-1</code> will no longer be loaded at start-up. This
+        makes it possible to define a <code>&lt;jsp-file&gt;</code> that will
+        not be loaded at start-up. (markt)
+      </update>
+      <fix>
+        Allow the JSP configuration option
+        <code>useInstanceManagerForTags</code> to be used with Tags that are
+        implemented as inner classes. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="WebSocket">
+    <changelog>
+      <scode>
+        Refactor the way Tomcat passes path parameters to POJO end points to
+        simplify the code. (markt)
       </scode>
     </changelog>
   </subsection>
@@ -134,6 +176,10 @@
         <bug>65235</bug>: Correct name of <code>changeLocalName</code> in the
         documentation for the <code>RemoteIpValve</code>. (markt)
       </fix>
+      <fix>
+        <bug>65265</bug>: Avoid getting the boot classpath when it is not
+        available in the Manager diagnostics. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Other">
@@ -142,6 +188,11 @@
         Update the packaged version of the Tomcat Native Library to 1.2.28.
         (markt)
       </update>
+      <fix>
+        Move <code>SystemPropertySource</code> to be a regular class to allow
+        more precise configuration if needed. The system property source will
+        still always be enabled. (remm)
+      </fix>
     </changelog>
   </subsection>
 </section>

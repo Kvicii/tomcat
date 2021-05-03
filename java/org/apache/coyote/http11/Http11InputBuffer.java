@@ -568,7 +568,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
                 } else if (prevChr == Constants.CR && chr == Constants.LF) {
                     end = pos - 1;
                     parsingRequestLineEol = true;
-                } else if (!HttpParser.isHttpProtocol(chr)) {
+                } else if (prevChr == Constants.CR || !HttpParser.isHttpProtocol(chr)) {
                     String invalidProtocol = parseInvalid(parsingRequestLineStart, byteBuffer);
                     throw new IllegalArgumentException(sm.getString("iib.invalidHttpProtocol", invalidProtocol));
                 }
@@ -638,7 +638,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
         while (buffer.hasRemaining() && b != 0x20) {
             b = buffer.get();
         }
-        String result = HeaderUtil.toPrintableString(buffer.array(), buffer.arrayOffset() + startPos, buffer.position() - startPos - 1);
+        String result = HeaderUtil.toPrintableString(buffer.array(), buffer.arrayOffset() + startPos, buffer.position() - startPos);
         if (b != 0x20) {
             // Ran out of buffer rather than found a space
             result = result + "...";
