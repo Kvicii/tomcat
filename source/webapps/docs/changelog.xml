@@ -103,7 +103,30 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.66 (markt)" rtext="in development">
+<section name="Tomcat 8.5.67 (markt)" rtext="in development">
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        <bug>65303</bug>; Fix a possible <code>NullPointerException</code> is
+        an error occurs on an HTTP/1.1 connection being upgraded to HTTP/2 or on
+        a pushed HTTP/2 stream. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <scode>
+        Review code used to generate Java source from JSPs and tags and remove
+        code found to be unnecessary. (markt)
+      </scode>
+      <scode>
+        Refactor use of internal <code>ChildInfo</code> class to use compile
+        time type checking rather than run time type checking. (markt)
+      </scode>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.66 (markt)" rtext="2021-05-12">
   <subsection name="Catalina">
     <changelog>
       <scode>
@@ -117,6 +140,10 @@
       <fix>
         <bug>65235</bug>: Add missing attributes to the MBean descriptor file
         for the <code>RemoteIpValve</code>. (markt)
+      </fix>
+      <fix>
+        <bug>65244</bug>: HandlesTypes should include classes that use
+        the specified annotation types on fields or methods. (remm)
       </fix>
       <fix>
         <bug>65251</bug>: Correct a regression introduced in 8.5.64 that meant
@@ -138,6 +165,13 @@
         When generating the error message for an HTTP request with an invalid
         request line, ensure that all the available data is included in the
         error message. (markt)
+      </fix>
+      <fix>
+        <bug>65272</bug>: Restore the optional HTTP feature that allows
+        <code>LF</code> to be treated as a line terminator for the request line
+        and/or HTTP headers lines as well as the standard <code>CRLF</code>.
+        This behaviour was previously removed as a side-effect of the fix for
+        CVE-2020-1935. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -168,6 +202,11 @@
         Refactor the way Tomcat passes path parameters to POJO end points to
         simplify the code. (markt)
       </scode>
+      <fix>
+        <bug>65262</bug>: Refactor the creation of WebSocket end point, decoder
+        and encoder instances to be more IoC friendly. Instances are now created
+        via the <code>InstanceManager</code> where possible. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
@@ -193,6 +232,15 @@
         more precise configuration if needed. The system property source will
         still always be enabled. (remm)
       </fix>
+      <add>
+        Improvements to Chinese translations. Provided by bytesgo. (mark)
+      </add>
+      <add>
+        Improvements to French translations. (remm)
+      </add>
+      <add>
+        Improvements to Korean translations. (woonsan)
+      </add>
     </changelog>
   </subsection>
 </section>

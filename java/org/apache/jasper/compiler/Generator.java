@@ -52,6 +52,7 @@ import org.apache.el.util.JreCompat;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.compiler.Node.ChildInfoBase;
 import org.apache.jasper.compiler.Node.NamedAttribute;
 import org.apache.jasper.runtime.JspRuntimeLibrary;
 import org.xml.sax.Attributes;
@@ -2963,17 +2964,14 @@ class Generator {
 
             String attrValue = attr.getValue();
             if (attrValue == null) {
-                if (attr.isNamedAttribute()) {
-                    if (n.checkIfAttributeIsJspFragment(attr.getName())) {
-                        // XXX - no need to generate temporary variable here
-                        attrValue = generateNamedAttributeJspFragment(attr
-                                .getNamedAttributeNode(), tagHandlerVar);
-                    } else {
-                        attrValue = generateNamedAttributeValue(attr
-                                .getNamedAttributeNode());
-                    }
+                // Must be a named attribute
+                if (n.checkIfAttributeIsJspFragment(attr.getName())) {
+                    // XXX - no need to generate temporary variable here
+                    attrValue = generateNamedAttributeJspFragment(attr
+                            .getNamedAttributeNode(), tagHandlerVar);
                 } else {
-                    return null;
+                    attrValue = generateNamedAttributeValue(attr
+                            .getNamedAttributeNode());
                 }
             }
 
@@ -3052,14 +3050,13 @@ class Generator {
                     // should the expression be evaluated before passing to
                     // the setter?
                     boolean evaluate = false;
-                    if (tai != null && tai.canBeRequestTime()) {
+                    if (tai.canBeRequestTime()) {
                         evaluate = true; // JSP.2.3.2
                     }
                     if (attr.isDeferredInput()) {
                         evaluate = false; // JSP.2.3.3
                     }
-                    if (attr.isDeferredInput() && tai != null &&
-                            tai.canBeRequestTime()) {
+                    if (attr.isDeferredInput() && tai.canBeRequestTime()) {
                         evaluate = !attrValue.contains("#{"); // JSP.2.3.5
                     }
                     if (evaluate) {
@@ -3094,9 +3091,9 @@ class Generator {
                     sb.append("}))");
                     attrValue = sb.toString();
                 } else {
+                    // Must be EL
                     // run attrValue through the expression interpreter
-                    String mapName = (attr.getEL() != null) ? attr.getEL()
-                            .getMapName() : null;
+                    String mapName = attr.getEL().getMapName();
                     attrValue = elInterpreter.interpreterCall(ctxt,
                             this.isTagFile, attrValue, c[0], mapName);
                 }
@@ -3124,9 +3121,6 @@ class Generator {
                 String nameFrom = tagVar.getNameFromAttribute();
                 if (nameFrom != null) {
                     String aliasedName = n.getAttributeValue(nameFrom);
-                    if (aliasedName == null)
-                        continue;
-
                     if (!aliasSeen) {
                         out.printin("java.util.HashMap ");
                         aliasMapVar = tagHandlerVar + "_aliasMap";
@@ -3269,8 +3263,7 @@ class Generator {
          * Generates anonymous JspFragment inner class which is passed as an
          * argument to SimpleTag.setJspBody().
          */
-        private void generateJspFragment(Node n, String tagHandlerVar)
-                throws JasperException {
+        private void generateJspFragment(ChildInfoBase n, String tagHandlerVar) throws JasperException {
             // XXX - A possible optimization here would be to check to see
             // if the only child of the parent node is TemplateText. If so,
             // we know there won't be any parameters, etc, so we can
@@ -3288,10 +3281,6 @@ class Generator {
             boolean tmpIsFragment = isFragment;
             isFragment = true;
             String pushBodyCountVarSave = pushBodyCountVar;
-            if (pushBodyCountVar != null) {
-                // Use a fixed name for push body count, to simplify code gen
-                pushBodyCountVar = "_jspx_push_body_count";
-            }
             visitBody(n);
             out = outSave;
             parent = tmpParent;
@@ -3388,18 +3377,8 @@ class Generator {
         }
     }
 
-    private static void generateLocalVariables(ServletWriter out, Node n)
-            throws JasperException {
-        Node.ChildInfo ci;
-        if (n instanceof Node.CustomTag) {
-            ci = ((Node.CustomTag) n).getChildInfo();
-        } else if (n instanceof Node.JspBody) {
-            ci = ((Node.JspBody) n).getChildInfo();
-        } else if (n instanceof Node.NamedAttribute) {
-            ci = ((Node.NamedAttribute) n).getChildInfo();
-        } else {
-            throw new JasperException(Localizer.getMessage("jsp.error.internal.unexpectedNodeType"));
-        }
+    private static void generateLocalVariables(ServletWriter out, ChildInfoBase n) {
+        Node.ChildInfo ci = n.getChildInfo();
 
         if (ci.hasUseBean()) {
             out.printil("javax.servlet.http.HttpSession session = _jspx_page_context.getSession();");
@@ -4234,8 +4213,7 @@ class Generator {
             out.printil("}");
         }
 
-        public Fragment openFragment(Node parent, int methodNesting)
-        throws JasperException {
+        public Fragment openFragment(ChildInfoBase parent, int methodNesting) {
             Fragment result = new Fragment(fragments.size(), parent);
             fragments.add(result);
             this.used = true;
