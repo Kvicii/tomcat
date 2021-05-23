@@ -621,23 +621,14 @@ public class StandardSession implements HttpSession, Session, Serializable {
      */
     @Override
     public HttpSession getSession() {
-
-        if (facade == null){
-            if (SecurityUtil.isPackageProtectionEnabled()){
-                final StandardSession fsession = this;
-                facade = AccessController.doPrivileged(
-                        new PrivilegedAction<StandardSessionFacade>(){
-                    @Override
-                    public StandardSessionFacade run(){
-                        return new StandardSessionFacade(fsession);
-                    }
-                });
+        if (facade == null) {
+            if (SecurityUtil.isPackageProtectionEnabled()) {
+                facade = AccessController.doPrivileged(new PrivilegedNewSessionFacade(this));
             } else {
                 facade = new StandardSessionFacade(this);
             }
         }
-        return (facade);
-
+        return facade;
     }
 
 
@@ -1375,6 +1366,8 @@ public class StandardSession implements HttpSession, Session, Serializable {
     public void setAttribute(String name, Object value) {
         setAttribute(name,value,true);
     }
+
+
     /**
      * Bind an object to this session, using the specified name.  If an object
      * of the same name is already bound to this session, the object is
@@ -1392,13 +1385,13 @@ public class StandardSession implements HttpSession, Session, Serializable {
      * @exception IllegalStateException if this method is called on an
      *  invalidated session
      */
-
     public void setAttribute(String name, Object value, boolean notify) {
 
         // Name cannot be null
-        if (name == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardSession.setAttribute.namenull"));
+        if (name == null) {
+            throw new IllegalArgumentException(
+                    sm.getString("standardSession.setAttribute.namenull"));
+        }
 
         // Null value is the same as removeAttribute()
         if (value == null) {
@@ -1408,13 +1401,14 @@ public class StandardSession implements HttpSession, Session, Serializable {
 
         // Validate our current state
         if (!isValidInternal()) {
-            throw new IllegalStateException(sm.getString(
-                    "standardSession.setAttribute.ise", getIdInternal()));
+            throw new IllegalStateException(
+                    sm.getString("standardSession.setAttribute.ise", getIdInternal()));
         }
-        if ((manager != null) && manager.getContext().getDistributable() &&
-                !isAttributeDistributable(name, value) && !exclude(name, value)) {
-            throw new IllegalArgumentException(sm.getString(
-                    "standardSession.setAttribute.iae", name));
+
+        Context context = manager.getContext();
+
+        if (context.getDistributable() && !isAttributeDistributable(name, value) && !exclude(name, value)) {
+            throw new IllegalArgumentException(sm.getString("standardSession.setAttribute.iae", name));
         }
         // Construct an event with the new value
         HttpSessionBindingEvent event = null;
@@ -1428,8 +1422,8 @@ public class StandardSession implements HttpSession, Session, Serializable {
                 try {
                     ((HttpSessionBindingListener) value).valueBound(event);
                 } catch (Throwable t){
-                    manager.getContext().getLogger().error
-                    (sm.getString("standardSession.bindingEvent"), t);
+                    manager.getContext().getLogger().error(
+                            sm.getString("standardSession.bindingEvent"), t);
                 }
             }
         }
@@ -1450,10 +1444,11 @@ public class StandardSession implements HttpSession, Session, Serializable {
             }
         }
 
-        if ( !notify ) return;
+        if (!notify) {
+            return;
+        }
 
         // Notify interested application event listeners
-        Context context = manager.getContext();
         Object listeners[] = context.getApplicationEventListeners();
         if (listeners == null) {
             return;
@@ -1475,15 +1470,12 @@ public class StandardSession implements HttpSession, Session, Serializable {
                     context.fireContainerEvent("afterSessionAttributeReplaced",
                             listener);
                 } else {
-                    context.fireContainerEvent("beforeSessionAttributeAdded",
-                            listener);
+                    context.fireContainerEvent("beforeSessionAttributeAdded", listener);
                     if (event == null) {
-                        event = new HttpSessionBindingEvent
-                            (getSession(), name, value);
+                        event = new HttpSessionBindingEvent(getSession(), name, value);
                     }
                     listener.attributeAdded(event);
-                    context.fireContainerEvent("afterSessionAttributeAdded",
-                            listener);
+                    context.fireContainerEvent("afterSessionAttributeAdded", listener);
                 }
             } catch (Throwable t) {
                 ExceptionUtils.handleThrowable(t);
@@ -1492,22 +1484,19 @@ public class StandardSession implements HttpSession, Session, Serializable {
                         context.fireContainerEvent(
                                 "afterSessionAttributeReplaced", listener);
                     } else {
-                        context.fireContainerEvent("afterSessionAttributeAdded",
-                                listener);
+                        context.fireContainerEvent("afterSessionAttributeAdded", listener);
                     }
                 } catch (Exception e) {
                     // Ignore
                 }
-                manager.getContext().getLogger().error
-                    (sm.getString("standardSession.attributeEvent"), t);
+                manager.getContext().getLogger().error(
+                        sm.getString("standardSession.attributeEvent"), t);
             }
         }
-
     }
 
 
     // ------------------------------------------ HttpSession Protected Methods
-
 
     /**
      * @return the <code>isValid</code> flag for this session without any expiration
@@ -1864,10 +1853,23 @@ public class StandardSession implements HttpSession, Session, Serializable {
                 manager.getContext().getLogger().error(sm.getString("standardSession.attributeEvent"), t);
             }
         }
-
     }
 
 
+    private static class PrivilegedNewSessionFacade implements
+            PrivilegedAction<StandardSessionFacade> {
+
+        private final HttpSession session;
+
+        public PrivilegedNewSessionFacade(HttpSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public StandardSessionFacade run(){
+            return new StandardSessionFacade(session);
+        }
+    }
 }
 
 

@@ -849,9 +849,8 @@ class Generator {
          * "no" or "false" - JSP document without a <jsp:root>
          */
         String omitXmlDecl = pageInfo.getOmitXmlDecl();
-        if ((omitXmlDecl != null && !JspUtil.booleanValue(omitXmlDecl))
-                || (omitXmlDecl == null && page.getRoot().isXmlSyntax()
-                        && !pageInfo.hasJspRoot() && !ctxt.isTagFile())) {
+        if ((omitXmlDecl != null && !JspUtil.booleanValue(omitXmlDecl)) ||
+                (omitXmlDecl == null && page.getRoot().isXmlSyntax() && !pageInfo.hasJspRoot() && !ctxt.isTagFile())) {
             String cType = pageInfo.getContentType();
             String charSet = cType.substring(cType.indexOf("charset=") + 8);
             out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\""
@@ -1154,8 +1153,7 @@ class Generator {
                 // If the page for jsp:forward was specified via
                 // jsp:attribute, first generate code to evaluate
                 // that body.
-                pageParam = generateNamedAttributeValue(page
-                        .getNamedAttributeNode());
+                pageParam = generateNamedAttributeValue(page.getNamedAttributeNode());
             } else {
                 pageParam = attributeValue(page, false, String.class);
             }
@@ -3168,7 +3166,7 @@ class Generator {
                 out.printin(tagHandlerVar);
                 out.print(".setParent(");
                 out.print("new javax.servlet.jsp.tagext.TagAdapter(");
-                out.print("(javax.servlet.jsp.tagext.SimpleTag) this ));");
+                out.println("(javax.servlet.jsp.tagext.SimpleTag) this ));");
             } else if (!simpleTag) {
                 out.printin(tagHandlerVar);
                 out.print(".setParent(");
@@ -3797,14 +3795,13 @@ class Generator {
             out.print(" = ");
             out.print(javaName);
             out.println(";");
-            if (ctxt.isTagFile()) {
-                // Tag files should also set jspContext attributes
-                out.printin("jspContext.setAttribute(\"");
-                out.print(attrInfo.getName());
-                out.print("\", ");
-                out.print(javaName);
-                out.println(");");
-            }
+            // Tag files should also set jspContext attributes
+            // Only called for tag files so always set the jspContext
+            out.printin("jspContext.setAttribute(\"");
+            out.print(attrInfo.getName());
+            out.print("\", ");
+            out.print(javaName);
+            out.println(");");
             out.popIndent();
             out.printil("}");
             out.println();
@@ -3827,8 +3824,9 @@ class Generator {
         boolean aliasSeen = false;
         TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
         for (TagVariableInfo var : tagVars) {
-            if (var.getNameFromAttribute() != null
-                    && var.getNameGiven() != null) {
+            // If a tag file uses a named attribute, the TagFileDirectiveVisitor
+            // will ensure that an alias is configured.
+            if (var.getNameFromAttribute() != null) {
                 aliasSeen = true;
                 break;
             }
@@ -4015,8 +4013,7 @@ class Generator {
             this.propertyEditorMaps = new Hashtable<>();
 
             try {
-                BeanInfo tagClassInfo = Introspector
-                        .getBeanInfo(tagHandlerClass);
+                BeanInfo tagClassInfo = Introspector.getBeanInfo(tagHandlerClass);
                 PropertyDescriptor[] pd = tagClassInfo.getPropertyDescriptors();
                 for (PropertyDescriptor propertyDescriptor : pd) {
                     /*
@@ -4031,8 +4028,12 @@ class Generator {
                                 .getPropertyEditorClass());
                 }
             } catch (IntrospectionException ie) {
-                err.jspError(n, ie, "jsp.error.introspect.taghandler",
-                        tagHandlerClass.getName());
+                // Likely unreachable code
+                // When last checked (May 2021), current versions of Java only
+                // throw IntrospectionException for the 2-arg version of
+                // getBeanInfo if the stop class is not a super class of the
+                // bean class. That does not apply here.
+                err.jspError(n, ie, "jsp.error.introspect.taghandler", tagHandlerClass.getName());
             }
         }
 

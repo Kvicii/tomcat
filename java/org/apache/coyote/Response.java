@@ -403,7 +403,7 @@ public final class Response {
                 return true;
             } catch( NumberFormatException ex ) {
                 // Do nothing - the spec doesn't have any "throws"
-                // and the user might know what he's doing
+                // and the user might know what they're doing
                 return false;
             }
         }
@@ -531,7 +531,14 @@ public final class Response {
 
         String charsetValue = m.getCharset();
 
-        if (charsetValue != null) {
+        if (charsetValue == null) {
+            // No charset and we know value is valid as parser was successful
+            // Pass-through user provided value in case user-agent is buggy and
+            // requires specific format
+            this.contentType = type;
+        } else {
+            // There is a charset so have to rebuild content-type without it
+            this.contentType = m.toStringNoCharset();
             charsetValue = charsetValue.trim();
             if (charsetValue.length() > 0) {
                 try {
