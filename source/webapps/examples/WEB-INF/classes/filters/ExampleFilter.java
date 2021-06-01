@@ -94,8 +94,9 @@ public final class ExampleFilter implements Filter {
             throws IOException, ServletException {
 
         // Store ourselves as a request attribute (if requested)
-        if (attribute != null)
+        if (attribute != null) {
             request.setAttribute(attribute, this);
+        }
 
         // Time and log the subsequent processing
         long startTime = System.currentTimeMillis();
@@ -126,8 +127,9 @@ public final class ExampleFilter implements Filter {
     @Override
     public String toString() {
 
-        if (filterConfig == null)
+        if (filterConfig == null) {
             return ("ExampleFilter()");
+        }
 
         return "ExampleFilter(" + filterConfig + ")";
     }

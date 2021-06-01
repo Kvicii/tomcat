@@ -564,7 +564,9 @@ public abstract class AbstractEndpoint<S> {
      * is 100.
      */
     private int acceptCount = 100;
-    public void setAcceptCount(int acceptCount) { if (acceptCount > 0) this.acceptCount = acceptCount; }
+    public void setAcceptCount(int acceptCount) { if (acceptCount > 0) {
+        this.acceptCount = acceptCount;
+    } }
     public int getAcceptCount() { return acceptCount; }
     @Deprecated
     public void setBacklog(int backlog) { setAcceptCount(backlog); }
@@ -979,10 +981,12 @@ public abstract class AbstractEndpoint<S> {
                 try (java.net.Socket s = new java.net.Socket()) {
                     int stmo = 2 * 1000;
                     int utmo = 2 * 1000;
-                    if (getSocketProperties().getSoTimeout() > stmo)
+                    if (getSocketProperties().getSoTimeout() > stmo) {
                         stmo = getSocketProperties().getSoTimeout();
-                    if (getSocketProperties().getUnlockTimeout() > utmo)
+                    }
+                    if (getSocketProperties().getUnlockTimeout() > utmo) {
                         utmo = getSocketProperties().getUnlockTimeout();
+                    }
                     s.setSoTimeout(stmo);
                     s.setSoLinger(getSocketProperties().getSoLingerOn(),getSocketProperties().getSoLingerTime());
                     if (getLog().isDebugEnabled()) {
@@ -1286,7 +1290,9 @@ public abstract class AbstractEndpoint<S> {
     protected abstract Log getLog();
 
     protected LimitLatch initializeConnectionLatch() {
-        if (maxConnections==-1) return null;
+        if (maxConnections==-1) {
+            return null;
+        }
         if (connectionLimitLatch==null) {
             connectionLimitLatch = new LimitLatch(getMaxConnections());
         }
@@ -1295,18 +1301,26 @@ public abstract class AbstractEndpoint<S> {
 
     protected void releaseConnectionLatch() {
         LimitLatch latch = connectionLimitLatch;
-        if (latch!=null) latch.releaseAll();
+        if (latch!=null) {
+            latch.releaseAll();
+        }
         connectionLimitLatch = null;
     }
 
     protected void countUpOrAwaitConnection() throws InterruptedException {
-        if (maxConnections==-1) return;
+        if (maxConnections==-1) {
+            return;
+        }
         LimitLatch latch = connectionLimitLatch;
-        if (latch!=null) latch.countUpOrAwait();
+        if (latch!=null) {
+            latch.countUpOrAwait();
+        }
     }
 
     protected long countDownConnection() {
-        if (maxConnections==-1) return -1;
+        if (maxConnections==-1) {
+            return -1;
+        }
         LimitLatch latch = connectionLimitLatch;
         if (latch!=null) {
             long result = latch.countDown();
@@ -1314,7 +1328,9 @@ public abstract class AbstractEndpoint<S> {
                 getLog().warn(sm.getString("endpoint.warn.incorrectConnectionCount"));
             }
             return result;
-        } else return -1;
+        } else {
+            return -1;
+        }
     }
 
     /**

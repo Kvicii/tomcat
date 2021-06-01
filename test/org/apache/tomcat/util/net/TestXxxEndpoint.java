@@ -28,7 +28,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.startup.TomcatBaseTest;
 import org.apache.tomcat.jni.Address;
 import org.apache.tomcat.jni.Error;
-import org.apache.tomcat.jni.Library;
 import org.apache.tomcat.jni.OS;
 import org.apache.tomcat.jni.Pool;
 import org.apache.tomcat.jni.Socket;
@@ -60,11 +59,7 @@ public class TestXxxEndpoint extends TomcatBaseTest {
         String address = InetAddress.getByName("localhost").getHostAddress();
 
         // Create the APR address that will be bound
-        int family = Socket.APR_INET;
-        if (Library.APR_HAVE_IPV6) {
-            if (!OS.IS_BSD && !OS.IS_WIN32 && !OS.IS_WIN64)
-                family = Socket.APR_UNSPEC;
-         }
+        int family = Socket.APR_UNSPEC;
 
         long inetAddress = 0;
         try {

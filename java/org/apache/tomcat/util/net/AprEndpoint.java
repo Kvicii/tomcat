@@ -304,27 +304,19 @@ public class AprEndpoint extends AbstractEndpoint<Long> implements SNICallBack {
         if (getAddress() != null) {
             addressStr = getAddress().getHostAddress();
         }
-        int family = Socket.APR_INET;
-        if (Library.APR_HAVE_IPV6) {
-            if (addressStr == null) {
-                if (!OS.IS_BSD) {
-                    family = Socket.APR_UNSPEC;
-                }
-            } else if (addressStr.indexOf(':') >= 0) {
-                family = Socket.APR_UNSPEC;
-            }
-         }
+        int family = Socket.APR_UNSPEC;
 
         long inetAddress = Address.info(addressStr, family,
                 getPort(), 0, rootPool);
         // Create the APR server socket
-        serverSock = Socket.create(Address.getInfo(inetAddress).family,
+        int saFamily = Address.getInfo(inetAddress).family;
+        serverSock = Socket.create(saFamily,
                 Socket.SOCK_STREAM,
                 Socket.APR_PROTO_TCP, rootPool);
         if (OS.IS_UNIX) {
             Socket.optSet(serverSock, Socket.APR_SO_REUSEADDR, 1);
         }
-        if (Library.APR_HAVE_IPV6) {
+        if (Library.APR_HAVE_IPV6 && saFamily == Socket.APR_INET6) {
             if (getIpv6v6only()) {
                 Socket.optSet(serverSock, Socket.APR_IPV6_V6ONLY, 1);
             } else {
@@ -624,10 +616,12 @@ public class AprEndpoint extends AbstractEndpoint<Long> implements SNICallBack {
         try {
 
             // 1: Set socket options: timeout, linger, etc
-            if (socketProperties.getSoLingerOn() && socketProperties.getSoLingerTime() >= 0)
+            if (socketProperties.getSoLingerOn() && socketProperties.getSoLingerTime() >= 0) {
                 Socket.optSet(socket, Socket.APR_SO_LINGER, socketProperties.getSoLingerTime());
-            if (socketProperties.getTcpNoDelay())
+            }
+            if (socketProperties.getTcpNoDelay()) {
                 Socket.optSet(socket, Socket.APR_TCP_NODELAY, (socketProperties.getTcpNoDelay() ? 1 : 0));
+            }
             Socket.timeoutSet(socket, socketProperties.getSoTimeout() * 1000);
 
             // 2: SSL handshake
