@@ -14,13 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.apache.catalina.users;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
@@ -75,13 +73,13 @@ public class MemoryUser extends AbstractUser {
     /**
      * The set of {@link Group}s that this user is a member of.
      */
-    protected final ArrayList<Group> groups = new ArrayList<>();
+    protected final CopyOnWriteArrayList<Group> groups = new CopyOnWriteArrayList<>();
 
 
     /**
      * The set of {@link Role}s associated with this user.
      */
-    protected final ArrayList<Role> roles = new ArrayList<>();
+    protected final CopyOnWriteArrayList<Role> roles = new CopyOnWriteArrayList<>();
 
 
     // ------------------------------------------------------------- Properties
@@ -92,9 +90,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public Iterator<Group> getGroups() {
-        synchronized (groups) {
-            return groups.iterator();
-        }
+        return groups.iterator();
     }
 
 
@@ -103,9 +99,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public Iterator<Role> getRoles() {
-        synchronized (roles) {
-            return roles.iterator();
-        }
+        return roles.iterator();
     }
 
 
@@ -128,13 +122,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void addGroup(Group group) {
-
-        synchronized (groups) {
-            if (!groups.contains(group)) {
-                groups.add(group);
-            }
-        }
-
+        groups.addIfAbsent(group);
     }
 
 
@@ -145,13 +133,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void addRole(Role role) {
-
-        synchronized (roles) {
-            if (!roles.contains(role)) {
-                roles.add(role);
-            }
-        }
-
+        roles.addIfAbsent(role);
     }
 
 
@@ -162,9 +144,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public boolean isInGroup(Group group) {
-        synchronized (groups) {
-            return groups.contains(group);
-        }
+        return groups.contains(group);
     }
 
 
@@ -177,9 +157,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public boolean isInRole(Role role) {
-        synchronized (roles) {
-            return roles.contains(role);
-        }
+        return roles.contains(role);
     }
 
 
@@ -190,11 +168,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void removeGroup(Group group) {
-
-        synchronized (groups) {
-            groups.remove(group);
-        }
-
+        groups.remove(group);
     }
 
 
@@ -203,11 +177,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void removeGroups() {
-
-        synchronized (groups) {
-            groups.clear();
-        }
-
+        groups.clear();
     }
 
 
@@ -218,11 +188,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void removeRole(Role role) {
-
-        synchronized (roles) {
-            roles.remove(role);
-        }
-
+        roles.remove(role);
     }
 
 
@@ -231,11 +197,7 @@ public class MemoryUser extends AbstractUser {
      */
     @Override
     public void removeRoles() {
-
-        synchronized (roles) {
-            roles.clear();
-        }
-
+        roles.clear();
     }
 
 

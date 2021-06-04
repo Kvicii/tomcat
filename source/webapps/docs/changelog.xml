@@ -148,6 +148,31 @@
         AprLifecycleListener does not show dev version suffix for libtcnative
         and libapr. (michaelo)
       </fix>
+      <update>
+        Refactor principal handling in <code>UserDatabaseRealm</code> using
+        an inner class that extends <code>GenericPrincipal</code>. (remm)
+      </update>
+      <fix>
+        Enable the default <code>doHead())</code> implementation in
+        <code>HttpServlet</code> to correctly handle responses where the content
+        length needs to be represented as a long since it is larger than the
+        maximum value that can be represented by an int. (markt)
+      </fix>
+      <fix>
+        Avoid synchronization on roles verification for the memory
+        <code>UserDatabase</code>. (remm)
+      </fix>
+      <fix>
+        Fix the default <code>doHead())</code> implementation in
+        <code>HttpServlet</code> to correctly handle responses where the Servlet
+        calls <code>ServletResponse.reset()</code> and/or
+        <code>ServletResponse.resetBuffer()</code>. (markt)
+      </fix>
+      <fix>
+        Fix the default <code>doHead())</code> implementation in
+        <code>HttpServlet</code> to correctly handle responses generated using
+        the Servlet non-blocking API. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -165,6 +190,13 @@
       <update>
         Simplify AprEndpoint socket bind for all platforms. (michaelo)
       </update>
+      <fix>
+        <bug>65340</bug>: Add missing check for a negative return value for
+        <code>Hpack.decodeInteger</code> in the <code>HpackDecoder</code>,
+        which could cause a <code>NegativeArraySizeException</code> exception.
+        Submitted by Thomas, and verified the fix is present in the donated
+        hpack code in a further update. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
