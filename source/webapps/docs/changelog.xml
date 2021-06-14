@@ -104,7 +104,17 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.67 (markt)" rtext="in development">
+<section name="Tomcat 8.5.68 (schultz)" rtext="in development">
+  <subsection name="Other">
+    <changelog>
+      <update>
+        Update to the Java 7 compatible build of JSign 3.1 to pick up a fix for
+        SHA-512 signatures. (markt)
+      </update>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.67 (schultz)" rtext="release in progress">
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -153,7 +163,7 @@
         an inner class that extends <code>GenericPrincipal</code>. (remm)
       </update>
       <fix>
-        Enable the default <code>doHead())</code> implementation in
+        Enable the default <code>doHead()</code> implementation in
         <code>HttpServlet</code> to correctly handle responses where the content
         length needs to be represented as a long since it is larger than the
         maximum value that can be represented by an int. (markt)
@@ -163,13 +173,13 @@
         <code>UserDatabase</code>. (remm)
       </fix>
       <fix>
-        Fix the default <code>doHead())</code> implementation in
+        Fix the default <code>doHead()</code> implementation in
         <code>HttpServlet</code> to correctly handle responses where the Servlet
         calls <code>ServletResponse.reset()</code> and/or
         <code>ServletResponse.resetBuffer()</code>. (markt)
       </fix>
       <fix>
-        Fix the default <code>doHead())</code> implementation in
+        Fix the default <code>doHead()</code> implementation in
         <code>HttpServlet</code> to correctly handle responses generated using
         the Servlet non-blocking API. (markt)
       </fix>
@@ -197,6 +207,30 @@
         Submitted by Thomas, and verified the fix is present in the donated
         hpack code in a further update. (remm)
       </fix>
+      <add>
+        Add debug logging for HTTP/2 HPACK header decoding. (markt)
+      </add>
+      <fix>
+        Correct parsing of HTTP headers consisting of a list of tokens so that a
+        header with an empty token is treated consistently regardless of whether
+        the empty token is at the start, middle or end of the list of tokens.
+        (markt)
+      </fix>
+      <fix>
+        Remove support for the <code>identity</code> transfer encoding. The
+        inclusion of this encoding in RFC 2616 was an error that was corrected
+        in 2001. Requests using this transfer encoding will now receive a 501
+        response. (markt)
+      </fix>
+      <fix>
+        Process transfer encoding headers from both HTTP 1.0 and HTTP 1.1
+        clients. (markt)
+      </fix>
+      <fix>
+        Ensure that if the transfer encoding header contains the
+        <code>chunked</code>, that the <code>chunked</code> encoding is the
+        final encoding listed. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -209,6 +243,19 @@
         Refactor use of internal <code>ChildInfo</code> class to use compile
         time type checking rather than run time type checking. (markt)
       </scode>
+      <fix>
+        <bug>65358</bug>: Improve expression language method matching for
+        methods with varargs. Where multiple methods may match the provided
+        parameters, the method that requires the fewest varargs is preferred.
+        (markt)
+      </fix>
+      <add>
+        <bug>65332</bug>: Add a commented out section in
+        <code>catalina.policy</code> that provides the necessary permissions to
+        compile JSPs with javac when running on Java 9 onwards with a security
+        manager. It is commented out as it will cause errors if used with
+        earlier Java versions. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="WebSocket">
@@ -242,6 +289,14 @@
       </add>
       <add>
         Improvements to Korean translations. (woonsan)
+      </add>
+      <update>
+        Update the packaged version of the Tomcat Native Library to 1.2.30. Also
+        update the minimum recommended version to 1.2.30. (markt)
+      </update>
+      <add>
+        Use JSign to integrate the build script with the code signing service to
+        enable release builds to be created on Linux as well as Windows. (markt)
       </add>
     </changelog>
   </subsection>
@@ -1458,6 +1513,14 @@
       <add>
         Include the target URL in the log message when a WebSocket connection
         fails. (markt)
+      </add>
+    </changelog>
+  </subsection>
+  <subsection name="Tribes">
+    <changelog>
+      <add>
+        <bug>61127</bug>Allow human-readable names for channelSendOptions and
+        mapSendOptions. Patch provided by Igal Sapir. (schultz)
       </add>
     </changelog>
   </subsection>
