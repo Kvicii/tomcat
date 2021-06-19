@@ -14,10 +14,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ taglib uri="http://tomcat.apache.org/bugs" prefix="bugs" %>
-<bugs:TesterBodyTag>
-  <bugs:TryCatchFinallyBodyTag>
-    <bugs:TesterBodyTag>
-    </bugs:TesterBodyTag>
-  </bugs:TryCatchFinallyBodyTag>
-</bugs:TesterBodyTag>
+<%@ include file="bug65390-empty.jsp" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+
+<bugs:TryCatchFinallyBodyTag>
+  <tags:bug65390>
+    <tags:bug65390>qqq</tags:bug65390>
+  </tags:bug65390>
+</bugs:TryCatchFinallyBodyTag>
