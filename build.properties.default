@@ -212,10 +212,10 @@ commons-daemon.native.win.loc.1=${base-commons.loc.1}/daemon/binaries/windows/co
 commons-daemon.native.win.loc.2=${base-commons.loc.2}/daemon/binaries/windows/commons-daemon-${commons-daemon.version}-bin-windows.zip
 
 # ----- JUnit Unit Test Suite, version 4.11 or later -----
-junit.version=4.13
+junit.version=4.13.2
 junit.checksum.enabled=true
 junit.checksum.algorithm=MD5|SHA-1
-junit.checksum.value=5da6445d7b80aba2623e73d4561dcfde|e49ccba652b735c93bd6e6f59760d8254cf597dd
+junit.checksum.value=d98a9a02a99a9acd22d7653cbcc1f31f|8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12
 junit.home=${base.path}/junit-${junit.version}
 junit.jar=${junit.home}/junit-${junit.version}.jar
 junit.loc=${base-maven.loc}/junit/junit/${junit.version}/junit-${junit.version}.jar
@@ -230,6 +230,7 @@ hamcrest.jar=${hamcrest.home}/hamcrest-${hamcrest.version}.jar
 hamcrest.loc=${base-maven.loc}/org/hamcrest/hamcrest/${hamcrest.version}/hamcrest-${hamcrest.version}.jar
 
 # ----- EasyMock, version 3.6 or later -----
+# 3.6 is the last version that runs on Java 7
 easymock.version=3.6
 easymock.checksum.enabled=true
 easymock.checksum.algorithm=SHA-512
@@ -248,6 +249,7 @@ cglib.jar=${cglib.home}/cglib-nodep-${cglib.version}.jar
 cglib.loc=${base-maven.loc}/cglib/cglib-nodep/${cglib.version}/cglib-nodep-${cglib.version}.jar
 
 # ----- objenesis, used by EasyMock, version 1.2 or later -----
+# 2.6 is the last version that runs on Java 7
 objenesis.version=2.6
 objenesis.checksum.enabled=true
 objenesis.checksum.algorithm=SHA-512
@@ -257,10 +259,10 @@ objenesis.jar=${objenesis.home}/objenesis-${objenesis.version}.jar
 objenesis.loc=${base-maven.loc}/org/objenesis/objenesis/${objenesis.version}/objenesis-${objenesis.version}.jar
 
 # ----- UnboundID, used by unit tests, version 5.1.4 or later -----
-unboundid.version=5.1.4
+unboundid.version=6.0.0
 unboundid.checksum.enabled=true
-unboundid.checksum.algorithm=SHA-512
-unboundid.checksum.value=04cf7f59eddebdd5b51e5be55021f9d9c667cca6101eac954e7a8d5b51f4c23372cd8f041640157f082435a166b75d85e79252b516130ede7d966dae6d3eae67
+unboundid.checksum.algorithm=MD5|SHA-1
+unboundid.checksum.value=98eba1bb435221d20c6766774cde97cb|c17a6ca8b9923ff3fc3461ebbcd9a598df4955be
 unboundid.home=${base.path}/unboundid-${unboundid.version}
 unboundid.jar=${unboundid.home}/unboundid-ldapsdk-${unboundid.version}.jar
 unboundid.loc=${base-maven.loc}/com/unboundid/unboundid-ldapsdk/${unboundid.version}/unboundid-ldapsdk-${unboundid.version}.jar
@@ -268,10 +270,10 @@ unboundid.loc=${base-maven.loc}/com/unboundid/unboundid-ldapsdk/${unboundid.vers
 # ----- Checkstyle, version 6.16 or later -----
 # Checkstyle 7 requires Java 8
 # Therefore, use checkstyle-backport-jre6
-checkstyle.version=8.22
+checkstyle.version=8.43
 checkstyle.checksum.enabled=true
 checkstyle.checksum.algorithm=MD5|SHA-1
-checkstyle.checksum.value=03cb9ae24d4103134095ccd650b3bbb7|32d2996bedc97ee4e22c50e6ff5a8b571c8d816e
+checkstyle.checksum.value=e62de5cde6a85e90de1027c9c0593a99|94993f0d96460a80ba044c281872f479625a8d5a
 checkstyle.home=${base.path}/checkstyle-backport-jre6-${checkstyle.version}
 checkstyle.jar=${checkstyle.home}/checkstyle-${checkstyle.version}-all.jar
 checkstyle.loc=${base-checkstyle.loc}/com/puppycrawl/tools/checkstyle-backport-jre6/${checkstyle.version}/checkstyle-backport-jre6-${checkstyle.version}-all.jar
@@ -285,7 +287,8 @@ cobertura.home=${base.path}/cobertura-${cobertura.version}
 cobertura.jar=${cobertura.home}/cobertura-${cobertura.version}.jar
 cobertura.loc=${base-sf.loc}/cobertura/cobertura-${cobertura.version}-bin.tar.gz
 
-# ----- Findbugs -----
+# ----- SpotBugs (originally FindBugs) -----
+# 3.1.12 is the last version that runs on Java 7
 findbugs.version=3.1.12
 findbugs.checksum.enabled=true
 findbugs.checksum.algorithm=MD5|SHA-1

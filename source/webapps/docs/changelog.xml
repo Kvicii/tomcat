@@ -111,6 +111,18 @@
         Refactor the <code>RemoteIpValve</code> to use the common utility method
         for list to comma separated string conversion. (markt)
       </scode>
+      <fix>
+        Fix serialization warnings in <code>UserDatabasePrincipal</code>
+        reported by SpotBugs. (markt)
+      </fix>
+      <fix>
+        <bug>65397</bug>: Calls to
+        <code>ServletContext.getResourcePaths()</code> no longer include
+        symbolic links in the results unless <code>allowLinking</code> has been
+        set to <code>true</code>. If a resource is skipped because of this
+        change, a warning will be logged as this typically indicates a
+        configuration issue. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -184,6 +196,28 @@
         and restore code that was removed in error leading to JSP compilation
         failures in some circumstances. (markt)
       </fix>
+      <add>
+        Add support for specifying Java 17 (with the value <code>17</code>) as
+        the compiler source and/or compiler target for JSP compilation. If used
+        with an Eclipse JDT compiler version that does not support these values,
+        a warning will be logged and the latest supported version will used.
+        (markt)
+      </add>
+      <fix>
+        <bug>65377</bug>: Update the Java code generation for JSPs not to use
+        the boxed primitive constructors as they have been deprecated in Java 9
+        and marked for future removal in Java 16. <code>valueOf()</code> is now
+        used instead. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="WebSocket">
+    <changelog>
+      <scode>
+        Refactor the <code>DigestAuthenticator</code> to reuse a shared
+        <code>SecureRandom</code> instance rather than create a new one to
+        generate the <code>cnonce</code> if required. (markt)
+      </scode>
     </changelog>
   </subsection>
   <subsection name="Web applications">
@@ -192,6 +226,19 @@
         <bug>65385</bug>: Correct the link in the documentation web application
         the Maven Central repository. (markt)
       </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Other">
+    <changelog>
+      <update>
+        Update JUnit to version 4.13.2. (markt)
+      </update>
+      <update>
+        Update UnboundID to 6.0.0. (markt)
+      </update>
+      <update>
+        Update CheckStyle backport to 8.43 . (markt)
+      </update>
     </changelog>
   </subsection>
 </section>
