@@ -104,7 +104,36 @@
   They eventually become mixed with the numbered issues (i.e., numbered
   issues do not "pop up" wrt. others).
 -->
-<section name="Tomcat 8.5.69 (schultz)" rtext="in development">
+<section name="Tomcat 8.5.70 (schultz)" rtext="in development">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>65411</bug>: Always close the connection when an uncaught
+        <code>NamingException</code> occurs to avoid connection locking.
+        Submitted by Ole Ostergaard. (remm)
+      </fix>
+      <fix>
+        <bug>65433</bug>: Correct a regression in the fix for <bug>65397</bug>
+        where a <code>StringIndexOutOfBoundsException</code> could be triggered
+        if the canonical path of the target of a symlink was shorter than the
+        canonical path of the directory in which the symlink had been created.
+        Patch provided by Cedomir Igaly. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Correct bugs in the HTTP/2 connection flow control management that meant
+        it was possible for a connection to stall waiting for a connection flow
+        control window update that had already arrived. Any streams on that
+        connection that were trying to write when this happened would time out.
+        (markt)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+<section name="Tomcat 8.5.69 (schultz)" rtext="2021-07-05">
   <subsection name="Catalina">
     <changelog>
       <scode>
@@ -225,6 +254,12 @@
       <fix>
         <bug>65385</bug>: Correct the link in the documentation web application
         the Maven Central repository. (markt)
+      </fix>
+      <fix>
+        <bug>65404</bug>: Correct a regression in the fix for <bug>63362</bug>
+        that caused the server status page in the Manager web application to be
+        truncated if HTTP upgrade was used such as when starting a WebSocket
+        connection. (markt)
       </fix>
     </changelog>
   </subsection>
